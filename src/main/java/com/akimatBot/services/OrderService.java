@@ -365,10 +365,7 @@ public class OrderService {
 //        this.save(foodOrder);
 //    }
 
-    public FoodOrder getActiveOrderInRestaurant(long chatId) {
-        return orderRepo.getLastClientOrder(chatId, OrderType.in_the_restaurant);
-//        return null;
-    }
+
 
     public List<FoodOrder> getActiveOrdersOfWaiter(long chatId) {
 //        return orderRepo.findAllByWaiterChatIdAndDoneIsFalse(chatId);
@@ -842,9 +839,20 @@ public class OrderService {
         throw new Exception();
     }
     @Transactional
-    public Cheque editPrepayment(long chequeId, double prepayment){
+    public Cheque editPrepayment(long chequeId, PaymentDTO prepayment){
+
         Cheque cheque = chequeRepo.findById(chequeId);
-        cheque.setPrepayment(prepayment);
+        if (cheque != null && cheque.getPrepayment() != null){
+            cheque.deletePrepayment();
+        }
+        Payment prePayment = new Payment();
+        prePayment.setAmount(prepayment.getAmount());
+        prePayment.setCheque(cheque);
+        prePayment.setPaymentType(paymentTypeRepo.findById(prepayment.getPaymentType().getId()));
+        prePayment.setPrepayment(true);
+        prePayment = paymentRepo.save(prePayment);
+
+        cheque.setPrepayment(prePayment);
         return chequeRepo.save(cheque);
     }
 

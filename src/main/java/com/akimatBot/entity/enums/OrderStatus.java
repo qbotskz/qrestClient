@@ -9,11 +9,15 @@ import lombok.ToString;
 @ToString
 public enum OrderStatus {
 
+
     ACTIVE,
     PRECHECK,
     DONE,
 
-    DELETED
+    DELETED,
+    IN_CART_CLIENT,
+
+    NEW
 
 
 

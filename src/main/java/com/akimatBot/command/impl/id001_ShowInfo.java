@@ -137,7 +137,7 @@ public class id001_ShowInfo extends Command {
 
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setWebApp(webAppInfo);
-        inlineKeyboardButton.setText("Restoran");
+        inlineKeyboardButton.setText("Altyn Altai");
 //        inlineKeyboardButton.setText("Durger king");
 
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();

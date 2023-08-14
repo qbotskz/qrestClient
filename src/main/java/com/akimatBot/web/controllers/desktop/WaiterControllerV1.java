@@ -195,20 +195,20 @@ public class WaiterControllerV1 {
         }
     }
 
-    @PreAuthorize("@permissionEvaluator.isOpenShift() " +
-            "&& @permissionEvaluator.isActiveOrderByOrderId(#foodOrderDTO.id) " +
-            "&& @permissionEvaluator.isMyOrderOrCanEditOther(#foodOrderDTO.id)")
-    @PostMapping("/createQuest")
-    public ResponseEntity<Object> createQuest(
-            @RequestBody FoodOrderDTO foodOrderDTO,
-            @RequestHeader(value="code") long code){
-        try {
-            return new ResponseEntity<>(orderService.createGuest(foodOrderDTO.getId()).getGuestDTO(Language.ru), HttpStatus.OK) ;
-        }catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST) ;
-        }
-    }
+//    @PreAuthorize("@permissionEvaluator.isOpenShift() " +
+//            "&& @permissionEvaluator.isActiveOrderByOrderId(#foodOrderDTO.id) " +
+//            "&& @permissionEvaluator.isMyOrderOrCanEditOther(#foodOrderDTO.id)")
+//    @PostMapping("/createQuest")
+//    public ResponseEntity<Object> createQuest(
+//            @RequestBody FoodOrderDTO foodOrderDTO,
+//            @RequestHeader(value="code") long code){
+//        try {
+//            return new ResponseEntity<>(orderService.createGuest(foodOrderDTO.getId()).getGuestDTO(Language.ru), HttpStatus.OK) ;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST) ;
+//        }
+//    }
 
 
     @PreAuthorize("@permissionEvaluator.isOpenShift() " +
@@ -364,7 +364,7 @@ public class WaiterControllerV1 {
             "&& @permissionEvaluator.isMyOrderOrCanEditOtherByChequeId(#chequeDTO.id)")
     @PostMapping("/cheque/editPrepayment")
     public ResponseEntity<Object> editPrepayment(@RequestBody ChequeDTO chequeDTO,
-                                  @RequestHeader(value="code") long code
+                                                 @RequestHeader(value="code") long code
     ){
         try {
             ChequeDTO chequeDTO1 = orderService.editPrepayment(chequeDTO.getId() ,chequeDTO.getPrepayment()).getChequeDTO();

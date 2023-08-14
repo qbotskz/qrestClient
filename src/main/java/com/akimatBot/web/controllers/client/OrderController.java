@@ -1,24 +1,24 @@
 package com.akimatBot.web.controllers.client;
 
+import com.akimatBot.entity.custom.Cheque;
+import com.akimatBot.entity.custom.Desk;
 import com.akimatBot.entity.custom.FoodOrder;
-import com.akimatBot.repository.repos.ChequeRepo;
-import com.akimatBot.repository.repos.MessageRepository;
-import com.akimatBot.repository.repos.OrderRepository;
-import com.akimatBot.repository.repos.PropertiesRepo;
-import com.akimatBot.services.CartItemService;
-import com.akimatBot.services.OrderService;
-import com.akimatBot.services.EmployeeService;
+import com.akimatBot.entity.custom.OrderItem;
+import com.akimatBot.repository.repos.*;
+import com.akimatBot.services.*;
 import com.akimatBot.web.dto.AnswerDTO;
 import com.akimatBot.web.dto.FoodOrderDTO;
+import com.akimatBot.web.dto.OrderItemDeleteDTO;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/client/order")
+
 public class OrderController {
 
     @Autowired
@@ -38,51 +38,39 @@ public class OrderController {
     PropertiesRepo propertiesRepo;
 
     @Autowired
-    OrderService orderService;
+    ClientOrderService clientOrderService;
 
     @Autowired
     ChequeRepo chequeRepo;
 
+    @Autowired
+    DeskRepo deskRepo;
 
-    //method for client // todo overwrite
-    @PostMapping("/createOrder/inRestaurant")
-    public FoodOrderDTO createOrderRest(@RequestParam("chatId") long chatId
+    @Autowired
+    OrderItemRepository orderItemRepository;
+
+
+
+
+
+    //перед отправкой запроса на этот метод, должны убедиться что со стороны телеграм бота(в комманде) отправляется параметр isNewClient в WebApp
+    //после открытия страницы с фронта если есть параметр isNewClient то отправляется запрос на этот параметр
+
+    //нужно проверить активный ли этот стол
+    //выаыва ыва
+    @PostMapping("/createOrder")
+    public ResponseEntity<T> createOrderRest(@RequestHeader("chatId") long chatId,
+                                             @RequestParam("deskId") long deskId
     ){
-
-//        User user = userService.findByChatId(chatId);
-////        user.setPhone(phoneNumber);
-////        user.setFullName(fullName);
-//        userService.save(user);
-//
-//        FoodOrder foodOrder = orderService.getActiveOrderInRestaurant(chatId);
-//        if (foodOrder == null) {
-//            foodOrder = new FoodOrder();
-////            foodOrder.setClient(user);
-//            foodOrder.setOrderType(OrderType.in_the_restaurant);
-//
-//            //todo add service, discount etc
-//            Cheque cheque = new Cheque();
-//            cheque = chequeRepo.save(cheque);
-//
-//            foodOrder.setCheque(cheque);
-//
-//            foodOrder = orderService.fillOrderWithCardItemsAndSave(foodOrder, chatId);
-//            cartItemService.clearUserCart(chatId);
-//        }
-//        else {
-//            foodOrder = orderService.reOrder(foodOrder, chatId);
-//
-//            cartItemService.clearUserCart(chatId);
-//        }
-//        return foodOrder.getFoodOrderDTO(user.getLanguage(), null);
-        return null;
+        clientOrderService.createNewOrder(chatId,deskId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/getOrder/active")
-    public ResponseEntity<Object> getActiveOrder(@RequestParam("chatId") long chatId){
-        FoodOrder order = orderService.getActiveOrderInRestaurant(chatId);
+    public ResponseEntity<Object> getActiveOrder(@RequestHeader("chatId") long chatId){
+        FoodOrder order = clientOrderService.getActiveOrderInRestaurant(chatId);
         if(order != null) {
-            return new ResponseEntity<>(order.getFoodOrderDTO(employeeService.getLanguageByChatId(chatId), null),
+            return new ResponseEntity<>(order.getFoodOrderDTO(LanguageService.getLanguage(chatId), chatId),
                     HttpStatus.OK);
         }
         else{
@@ -90,6 +78,66 @@ public class OrderController {
                     HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/addToCart")
+    public ResponseEntity<Object> addToCart(@RequestHeader("chatId") long chatId,
+                                             @RequestParam("foodId") long foodId
+    ){
+        try {
+            return new ResponseEntity<>(clientOrderService.addToCart(chatId, foodId), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+
+    @PostMapping("/orderItem/delete")
+    public ResponseEntity<Object> deleteOrderItem(
+            @RequestBody OrderItemDeleteDTO item,
+            @RequestHeader(value="chatId") long chatId
+    ){
+
+        try {
+
+            OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
+            Cheque cheque = orderItem1.getGuest().getFoodOrder().getCheque();
+            if (clientOrderService.cancelOrderItem(item)){
+                return new ResponseEntity<>(cheque.getChequeDTO(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Problemka",HttpStatus.FORBIDDEN);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @PostMapping("/orderItem/decrease")
+    public ResponseEntity<Object> editCountOfOrderItem(
+            @RequestParam ("orderItemId") long orderItemId,
+            @RequestHeader(value="chatId") long chatId
+    ){
+
+        try {
+            return new ResponseEntity<>(clientOrderService.decreaseOrderItem(orderItemId,chatId), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PostMapping("/place")
+    public ResponseEntity<Object> place(@RequestHeader("chatId") long chatId
+    ){
+        try {
+            clientOrderService.place(chatId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
 //    @GetMapping("/activeOrders")
 //    public List<FoodOrderDTO> getActiveOrders(){

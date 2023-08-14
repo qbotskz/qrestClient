@@ -1,6 +1,7 @@
 package com.akimatBot.repository.repos;
 
 import com.akimatBot.entity.custom.FoodOrder;
+import com.akimatBot.entity.custom.Guest;
 import com.akimatBot.entity.custom.PaymentTypeReport;
 import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.entity.enums.OrderType;
@@ -63,6 +64,9 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
             "            ORDER BY ID DESC LIMIT 1", nativeQuery = true)
     FoodOrder getLastClientOrder(long chatId, OrderType in_the_restaurant);
 
+
+    @Query("select guest.foodOrder from Guest guest where guest.client.chatId = ?1 and guest.foodOrder.orderStatus = 4")
+    FoodOrder getLastClientOrder2(long chatId, OrderType in_the_restaurant);
 
 
 //    FoodOrder findLastByClientChatIdAndOrderTypeAndDoneIsFalse(long chatId, OrderType in_the_restaurant);
@@ -194,4 +198,7 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
     @Query("update FoodOrder g set g.orderStatus = 3 where g.id = ?1")
     @Modifying
     void delete(long id);
+
+    @Query("select guest from Guest guest where guest.client.chatId = ?2 and guest.foodOrder.id = ?1")
+    Guest getGuestOfOrder(long id, long chatId);
 }

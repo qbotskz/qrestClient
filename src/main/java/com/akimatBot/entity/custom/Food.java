@@ -1,5 +1,6 @@
 package com.akimatBot.entity.custom;
 
+import com.akimatBot.RestoranApplication;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.utils.DateUtil;
 import com.akimatBot.web.dto.FoodDTO;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.core.env.Environment;
+import org.springframework.web.context.support.StandardServletEnvironment;
 
 import javax.persistence.*;
 import java.util.*;
@@ -38,7 +41,7 @@ public class Food {
     @ManyToOne
     private FoodCategory foodCategory;
 
-    private String photo_url;
+//    private String photo_url;
 
     private Boolean activated;
 //    @Column(nullable = true)
@@ -49,6 +52,8 @@ public class Food {
     private Integer cashBackPercentage;
 
     private String nameKitchen;
+    private String article;
+
 
     @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -70,7 +75,15 @@ public class Food {
             return nameKz;
         }
     }
-//    public Integer getFoodPrice(City city){
+
+    public String getPhotoUrl() {
+        String ip = "https://109.233.108.126:";
+        Environment environment = new StandardServletEnvironment();
+        String propertyValue = environment.getProperty("server.port");
+        return ip + "8063" + "/api/client/photos/"  + this.getArticle() + ".jpg";
+    }
+
+    //    public Integer getFoodPrice(City city){
 //        if(city == City.ALMATY){
 //            return price;
 //        }
@@ -84,7 +97,7 @@ public class Food {
         json.put("id", id);
         json.put("price", price);
         json.put("description", getFoodDescription(lang));
-        json.put("photo_url", photo_url);
+//        json.put("photo_url", photo_url);
         json.put("cashBackPercentage", cashBackPercentage);
         json.put("specialOfferSum", specialOfferSum);
         json.put("name", getFoodName(lang));
@@ -97,7 +110,6 @@ public class Food {
         foodDTO.setPrice(this.getPrice());
         foodDTO.setName(this.getFoodName(lang));
         foodDTO.setDescription(this.getFoodDescription(lang));
-        foodDTO.setPhoto_url(this.photo_url);
         foodDTO.setCashBackPercentage(this.cashBackPercentage);
         foodDTO.setSpecialOfferSum(this.specialOfferSum);
         foodDTO.setActivated(this.activated);
@@ -105,6 +117,7 @@ public class Food {
         foodDTO.setBranch(this.getBranch().getDTO());
         foodDTO.setLastChanged(DateUtil.getDbMmYyyyHhMmSs(this.getLastChanged()));
         foodDTO.setKitchens(getKitchensDTO());
+        foodDTO.setPhotoUrl(this.getPhotoUrl());
 
         return foodDTO;
 

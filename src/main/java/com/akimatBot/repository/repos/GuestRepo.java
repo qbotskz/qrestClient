@@ -35,4 +35,6 @@ public interface GuestRepo extends JpaRepository<Guest, Long> {
     @Query("update Guest g set g.deleted = true where g.id = ?1")
     @Modifying
     void delete(long id);
+
+    Guest findByClientChatId(long chatId);
 }

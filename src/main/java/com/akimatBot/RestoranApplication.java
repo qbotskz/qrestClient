@@ -8,6 +8,7 @@ import com.akimatBot.web.websocets.timerTasks.CheckPrintKitchen;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,6 +42,9 @@ public class RestoranApplication implements CommandLineRunner {
     @Autowired
     SendDailyReport sendDailyReport;
 
+    @Value("${server.port}")
+    static String port;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -53,7 +57,7 @@ public class RestoranApplication implements CommandLineRunner {
         bot = new       Bot();
 
         try {
-            telegramBotsApi.registerBot(bot);
+//            telegramBotsApi.registerBot(bot);
             log.info("Bot was registered: " + bot.getBotUsername());
         } catch (Exception e) {
             log.error("Error in main class", e);
@@ -68,19 +72,23 @@ public class RestoranApplication implements CommandLineRunner {
     }
 
     private void initTimers() {
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(checkPrintKitchen, 0, 6000);
+//        Timer timer = new Timer(true);
+//        timer.scheduleAtFixedRate(checkPrintKitchen, 0, 6000);
 
 
-        Timer timer1 = new Timer(true);
-        timer1.scheduleAtFixedRate(checkCancelOrderItem, 0, 6000);
+//        Timer timer1 = new Timer(true);
+//        timer1.scheduleAtFixedRate(checkCancelOrderItem, 0, 6000);
 
-        Timer timerDailyReport = new Timer(true);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        timerDailyReport.scheduleAtFixedRate(sendDailyReport, calendar.getTime(), 1000*60*60*24);
+//        Timer timerDailyReport = new Timer(true);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, 23);
+//        calendar.set(Calendar.MINUTE, 59);
+//        calendar.set(Calendar.SECOND, 59);
+//        timerDailyReport.scheduleAtFixedRate(sendDailyReport, calendar.getTime(), 1000*60*60*24);
+    }
+
+    public static String getPort(){
+        return port;
     }
 
 

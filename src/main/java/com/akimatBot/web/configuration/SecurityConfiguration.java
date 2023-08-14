@@ -42,6 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String MOBILE_GENERAL_SHIFT_ENDPOINT = "/api/mobile/shift/general/**";
 
     private static final String PRINTER_CONNECTION_ENDPOINT = "/api/printer/**";
+    private static final String CLIENT_ENDPOINT = "/api/client/**";
 
 
     @Autowired
@@ -69,13 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(MOBILE_WAITER_ENDPOINT).permitAll()
-                .antMatchers(MOBILE_HALL_ENDPOINT).permitAll()
-                .antMatchers(MOBILE_DESK_ENDPOINT).permitAll()
-                .antMatchers(MOBILE_MAIN_ENDPOINT).permitAll()
-                .antMatchers(PRINTER_ENDPOINT).permitAll()
-                .antMatchers(PRINTER_CONNECTION_ENDPOINT).permitAll()
-                .antMatchers(MOBILE_GENERAL_SHIFT_ENDPOINT).permitAll()
+                .antMatchers(CLIENT_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

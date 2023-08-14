@@ -105,5 +105,8 @@ public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
         setDelete(orderItem);
     }
 
-
+    @Query("update OrderItem item set item.orderItemStatus = 5 where item.orderItemStatus = 4 and item.guest.id = (select user.currentGuest.id from users user where user.chatId = ?1)")
+    @Modifying
+    @Transactional
+    void orderingByClient(long chatId);
 }

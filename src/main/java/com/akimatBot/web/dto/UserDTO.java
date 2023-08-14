@@ -15,10 +15,15 @@ public class UserDTO {
 
     private long id;
 
-    private String email;
+//    private String email;
+//
+//    private String password;
 
-    private String password;
+//    private String code;
 
-    private String code;
+    private String      fullName;
+
+    private String      phone;
+
 
 }

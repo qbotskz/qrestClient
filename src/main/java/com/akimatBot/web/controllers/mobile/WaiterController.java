@@ -253,14 +253,13 @@ public class WaiterController {
 
     @PreAuthorize("@permissionEvaluator.isOpenShiftByChatId(#chatId)")
     @PostMapping("/editPrepayment")
-    public ResponseEntity<Object> editPrepayment(@RequestParam("chequeId") long chequeId,
-                                              @RequestParam("prepayment") double prepayment,
-                                              @RequestHeader(value="chatId") long chatId
+    public ResponseEntity<Object> editPrepayment(@RequestBody ChequeDTO chequeDTO,
+                                                 @RequestHeader(value="chatId") long chatId
     ){
 
         try {
 
-            return new ResponseEntity<>(orderService.editPrepayment(chequeId, prepayment).getChequeDTO(),
+            return new ResponseEntity<>(orderService.editPrepayment(chequeDTO.getId(), chequeDTO.getPrepayment()).getChequeDTO(),
                     HttpStatus.OK);
 
         }catch (Exception e){

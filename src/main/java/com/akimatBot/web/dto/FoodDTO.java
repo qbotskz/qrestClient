@@ -29,28 +29,11 @@ public class FoodDTO {
     private String lastChanged;
     private RestaurantBranchDTO branch;
 
-//    RestaurantBranch branch;
-
-    private String photo_url;
 
     private Boolean activated;
     private Integer specialOfferSum;
     private Integer cashBackPercentage;
     private List<KitchenDTO> kitchens;
-//    public String getFoodDescription(Language lang){
-//        if(lang == Language.ru)
-//            return descriptionRu;
-//
-//        return descriptionKz;
-//    }
-//    public String getFoodName(Language lang){
-//        if(lang == Language.ru){
-//            return nameRu;
-//        }
-//        else {
-//            return nameKz;
-//        }
-//    }
 
-
+    private String photoUrl;
 }

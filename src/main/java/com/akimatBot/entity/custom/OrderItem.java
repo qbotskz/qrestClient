@@ -82,6 +82,9 @@ public class OrderItem {
     public void addQuantity() {
         this.quantity += 1;
     }
+    public void minusQuantity() {
+        this.quantity -= 1;
+    }
 
     public double getTotal(){
 //        System.out.println(getJson());
