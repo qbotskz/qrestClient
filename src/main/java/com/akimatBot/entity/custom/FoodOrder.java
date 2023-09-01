@@ -101,23 +101,6 @@ public class FoodOrder {
         }
     }
 
-    public FoodOrderDTO getFoodOrderDTO(Language language, long chatId) {
-
-        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
-        foodOrderDTO.setId(this.id);
-        foodOrderDTO.setOrderStatus(this.orderStatus);
-        foodOrderDTO.setDeliverNeed(this.deliverNeed);
-        foodOrderDTO.setAddress(this.address);
-        foodOrderDTO.setOrderType(this.orderType);
-        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
-//        foodOrderDTO.setCompletionDate(this.completionDate);
-        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-        foodOrderDTO.setGuests(getGuestsDTO(language,chatId));
-//        foodOrderDTO.setPersonalCanChange(getOpportunity(code));
-        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
-
-        return foodOrderDTO;
-    }
     public FoodOrderDTO getFoodOrderDTO(Language language) {
 
         FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
@@ -127,31 +110,51 @@ public class FoodOrder {
         foodOrderDTO.setAddress(this.address);
         foodOrderDTO.setOrderType(this.orderType);
         foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
-        foodOrderDTO.setCreatedDateInDate(DateUtil.getDbMmYyyyHhMmSs(this.createdDate));
 //        foodOrderDTO.setCompletionDate(this.completionDate);
         foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-//        foodOrderDTO.setGuests(getGuestsDTO(language));
+        foodOrderDTO.setGuests(getGuestsDTO(language));
 //        foodOrderDTO.setPersonalCanChange(getOpportunity(code));
         foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
 
         return foodOrderDTO;
     }
-    public FoodOrderDTO getFoodOrderDTOByChatId(Language language, Long chatId) {
+//    public FoodOrderDTO getFoodOrderDTO(Language language) {
+//
+//        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
+//        foodOrderDTO.setId(this.id);
+//        foodOrderDTO.setOrderStatus(this.orderStatus);
+//        foodOrderDTO.setDeliverNeed(this.deliverNeed);
+//        foodOrderDTO.setAddress(this.address);
+//        foodOrderDTO.setOrderType(this.orderType);
+//        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
+//        foodOrderDTO.setCreatedDateInDate(DateUtil.getDbMmYyyyHhMmSs(this.createdDate));
+////        foodOrderDTO.setCompletionDate(this.completionDate);
+//        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
+////        foodOrderDTO.setGuests(getGuestsDTO(language));
+////        foodOrderDTO.setPersonalCanChange(getOpportunity(code));
+//        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
+//
+//        return foodOrderDTO;
+//    }
 
-        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
-        foodOrderDTO.setId(this.id);
-        foodOrderDTO.setOrderStatus(this.orderStatus);
-        foodOrderDTO.setDeliverNeed(this.deliverNeed);
-        foodOrderDTO.setAddress(this.address);
-        foodOrderDTO.setOrderType(this.orderType);
-        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
-        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-        foodOrderDTO.setGuests(getGuestsDTO(language, chatId));
-        foodOrderDTO.setPersonalCanChange(getOpportunityByChatId(chatId));
-        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
+//    public FoodOrderDTO getFoodOrderDTO(Language language) {
+//
+//        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
+//        foodOrderDTO.setId(this.id);
+//        foodOrderDTO.setOrderStatus(this.orderStatus);
+//        foodOrderDTO.setDeliverNeed(this.deliverNeed);
+//        foodOrderDTO.setAddress(this.address);
+//        foodOrderDTO.setOrderType(this.orderType);
+//        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
+//        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
+//        foodOrderDTO.setGuests(getGuestsDTO(language));
+////        foodOrderDTO.setPersonalCanChange(getOpportunityByChatId(chatId));
+//        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
+//
+//        return foodOrderDTO;
+//    }
 
-        return foodOrderDTO;
-    }
+
 
     private Boolean getOpportunityByChatId(Long chatId) {
         if (chatId != null) {
@@ -185,12 +188,12 @@ public class FoodOrder {
         return null;
     }
 
-    private List<GuestDTO> getGuestsDTO(Language language, long chatId) {
+    private List<GuestDTO> getGuestsDTO(Language language) {
 
         List<GuestDTO> items = new ArrayList<>();
 
         for (Guest guest :  getGuests()) {
-            items.add(guest.getGuestDTO(language, chatId));
+            items.add(guest.getGuestDTO(language));
         }
 
         return items;

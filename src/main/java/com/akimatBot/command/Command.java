@@ -100,6 +100,7 @@ public abstract class Command {
     protected SuggestionComplaintRepo suggestionComplaintRepo = TelegramBotRepositoryProvider.getSuggestionComplaintRepo();
     protected CashbackRepository cashbackRepository = TelegramBotRepositoryProvider.getCashbackRepository();
     protected RestaurantBranchRepo restaurantBranchRepo = TelegramBotRepositoryProvider.getRestaurantBranchRepo();
+    protected AboutRestaurantRepo aboutRestaurantRepo = TelegramBotRepositoryProvider.getAboutRestaurantRepo();
 
     protected KaspiAccountsRepository kaspiAccountsRepository = TelegramBotRepositoryProvider.getKaspiAccountsRepository();
 

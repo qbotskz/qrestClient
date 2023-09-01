@@ -5,7 +5,9 @@ import com.akimatBot.entity.standart.Employee;
 import com.akimatBot.entity.standart.Role;
 import com.akimatBot.repository.repos.EmployeeRepository;
 
+import com.akimatBot.repository.repos.WaiterShiftRepo;
 import com.akimatBot.web.dto.RoleDTO;
+import com.akimatBot.web.dto.WaiterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
+    @Autowired
+    WaiterShiftRepo waiterShiftRepo;
 
     @Autowired
     public EmployeeService(EmployeeRepository employeeRepository) {
@@ -138,5 +142,12 @@ public class EmployeeService {
             return employeeRepository.hasCodeByChatId(chatId);
         }
         return false;
+    }
+
+
+    public List<Employee> getAllActiveWaiters(){
+        List<Employee> users = waiterShiftRepo.getActiveWaiters();
+
+        return users;
     }
 }

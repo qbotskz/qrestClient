@@ -186,7 +186,7 @@ public class WaiterControllerV1 {
             @RequestParam("deskId") long deskId,
             @RequestHeader(value="code") long code){
         try {
-            return orderService.createEmptyOrder(deskId, code).getDesk().getDeskDTOFull(Language.ru, code);
+            return orderService.createEmptyOrder(deskId, code).getDesk().getDeskDTOFull(Language.ru);
         }catch (Exception e){
             e.printStackTrace();
             Map<Object, Object> ans = new TreeMap<>();
@@ -644,19 +644,19 @@ public class WaiterControllerV1 {
 
 
 
-    @PreAuthorize("@permissionEvaluator.isOpenShift()")
-    @GetMapping("/getOrders/done")
-    public Object getDoneOrders(@RequestHeader("chatId") long chatId) {
-        List<FoodOrder> orders = orderService.getDoneOrdersOfWaiter(chatId);
-
-        List<FoodOrderDTO> orjsns = new ArrayList<>();
-        for (FoodOrder fo : orders) {
-            orjsns.add(fo.getFoodOrderDTO(Language.ru, chatId));
-        }
-        return orjsns;
-
-
-    }
+//    @PreAuthorize("@permissionEvaluator.isOpenShift()")
+//    @GetMapping("/getOrders/done")
+//    public Object getDoneOrders(@RequestHeader("chatId") long chatId) {
+//        List<FoodOrder> orders = orderService.getDoneOrdersOfWaiter(chatId);
+//
+//        List<FoodOrderDTO> orjsns = new ArrayList<>();
+//        for (FoodOrder fo : orders) {
+//            orjsns.add(fo.getFoodOrderDTO(Language.ru, chatId));
+//        }
+//        return orjsns;
+//
+//
+//    }
 
 //    @GetMapping("/activeOrders")
 //    public List<Map<Object, Object>> getActiveOrders(){
@@ -691,13 +691,13 @@ public class WaiterControllerV1 {
 
 
 
-    @PreAuthorize("@permissionEvaluator.isOpenShift()")
-    @GetMapping("/order/getOne")
-    public FoodOrderDTO payOrder(@RequestHeader("chatId") long chatId,
-                           @RequestParam("foodOrderId") long foodOrderId){
-
-        return orderService.findById(foodOrderId).getFoodOrderDTO(Language.ru, chatId);
-    }
+//    @PreAuthorize("@permissionEvaluator.isOpenShift()")
+//    @GetMapping("/order/getOne")
+//    public FoodOrderDTO payOrder(@RequestHeader("chatId") long chatId,
+//                           @RequestParam("foodOrderId") long foodOrderId){
+//
+//        return orderService.findById(foodOrderId).getFoodOrderDTO(Language.ru, chatId);
+//    }
 
 
 

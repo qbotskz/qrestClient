@@ -15,9 +15,9 @@ public enum OrderItemStatus {
 
     DELETED(3),
 
-    IN_CART_CLIENT(4),
+    IN_CART_CLIENT(4);
 
-    ORDERED_CLIENT(5);
+//    ORDERED_CLIENT(5);
 
     final long id;
 }

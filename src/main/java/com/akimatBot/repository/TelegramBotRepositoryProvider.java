@@ -127,6 +127,10 @@ public class TelegramBotRepositoryProvider {
     @Setter
     private static EmployeeRepository employeeRepository;
 
+    @Getter
+    @Setter
+    private static AboutRestaurantRepo aboutRestaurantRepo;
+
 
 
     @Autowired
@@ -141,7 +145,7 @@ public class TelegramBotRepositoryProvider {
                                          DeskRepo deskRepo, CartItemRepo cartItemRepo,OrderItemRepository orderItemRepository,
                                          GuestRepo guestRepo,ChequeRepo chequeRepo, WaiterShiftRepo waiterShiftRepo,
                                          PaymentTypeRepo paymentTypeRepo,PaymentRepo paymentRepo,
-                                         HallRepo hallRepo,EmployeeRepository employeeRepository){
+                                         HallRepo hallRepo,EmployeeRepository employeeRepository,AboutRestaurantRepo aboutRestaurantRepo){
 
         setMessageRepository(messageRepository);
         setKeyboardMarkUpRepository(keyboardMarkUpRepository);
@@ -169,6 +173,7 @@ public class TelegramBotRepositoryProvider {
         setPaymentRepo(paymentRepo);
         setHallRepo(hallRepo);
         setEmployeeRepository(employeeRepository);
+        setAboutRestaurantRepo(aboutRestaurantRepo);
     }
 
 }

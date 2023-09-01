@@ -25,5 +25,7 @@ public class UserDTO {
 
     private String      phone;
 
+    private Long chatId;
+
 
 }

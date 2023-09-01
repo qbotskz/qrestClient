@@ -43,6 +43,7 @@ public class User {
         userDTO.setId(this.id);
         userDTO.setFullName(fullName);
         userDTO.setPhone(this.getPhone());
+        userDTO.setChatId(this.getChatId());
         return userDTO;
     }
 }

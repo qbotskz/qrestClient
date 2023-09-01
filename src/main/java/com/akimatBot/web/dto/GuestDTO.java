@@ -24,7 +24,7 @@ public class GuestDTO {
 
     private List<OrderItemDTO> orderItems;
 
-    private boolean isMe;
+    private UserDTO user;
 
 //    private Date createdDate;
 

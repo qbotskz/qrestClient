@@ -121,11 +121,11 @@ public class FoodController {
         Path photoPath = Paths.get(photosPath).resolve(fileName);
         Resource resource = new UrlResource(photoPath.toUri());
 
-        if (resource.exists() && resource.isReadable()) {
-            return ResponseEntity.ok().body(resource);
-        } else {
-            return ResponseEntity.notFound().build();
+        if (!resource.exists() || !resource.isReadable()) {
+            photoPath = Paths.get("C:\\Users\\$$$CafeTest\\Desktop\\qrest client\\qrestClient\\src\\main\\resources\\images\\no_food.jpg");
+            resource = new UrlResource(photoPath.toUri());
         }
+        return ResponseEntity.ok().body(resource);
     }
 
 

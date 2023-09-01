@@ -1,11 +1,14 @@
 package com.akimatBot.web.controllers.client;
 
 import com.akimatBot.entity.enums.Language;
+import com.akimatBot.repository.repos.AboutRestaurantRepo;
 import com.akimatBot.repository.repos.UserRepository;
 import com.akimatBot.services.LanguageService;
 import com.akimatBot.services.UserService;
 import com.akimatBot.web.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +20,9 @@ public class ProfileController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AboutRestaurantRepo aboutRestaurantRepo;
 
     @PostMapping("/setLanguage")
     public void setLanguage(@RequestBody Language language,
@@ -48,4 +54,8 @@ public class ProfileController {
 
     }
 
+    @GetMapping("/aboutRest")
+    private ResponseEntity<Object> getAboutRest(@RequestHeader Long chatId){
+        return new ResponseEntity<>(LanguageService.getAboutRest(chatId), HttpStatus.OK);
+    }
 }

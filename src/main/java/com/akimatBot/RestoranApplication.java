@@ -57,7 +57,7 @@ public class RestoranApplication implements CommandLineRunner {
         bot = new       Bot();
 
         try {
-//            telegramBotsApi.registerBot(bot);
+            telegramBotsApi.registerBot(bot);
             log.info("Bot was registered: " + bot.getBotUsername());
         } catch (Exception e) {
             log.error("Error in main class", e);

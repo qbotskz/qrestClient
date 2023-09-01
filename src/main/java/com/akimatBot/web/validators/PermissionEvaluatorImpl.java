@@ -66,7 +66,8 @@ public class PermissionEvaluatorImpl
         return orderService.getOrderStatus(orderId) == OrderStatus.ACTIVE;
     }
     public boolean isActiveOrderByOrderItem(long orderItemId) {
-        return orderItemRepository.getOrderStatusOfOrderItem(orderItemId) == OrderStatus.ACTIVE;
+        OrderStatus currentStatus = orderItemRepository.getOrderStatusOfOrderItem(orderItemId);
+        return  currentStatus == OrderStatus.ACTIVE || currentStatus == OrderStatus.NEW;
     }
 
     public boolean isActiveOrderByCheque(long chequeId) {

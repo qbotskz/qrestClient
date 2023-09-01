@@ -2,6 +2,7 @@ package com.akimatBot.services;
 
 import com.akimatBot.command.Command;
 import com.akimatBot.command.CommandFactory;
+import com.akimatBot.command.impl.id031_OpenLink;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.standart.Button;
 import com.akimatBot.exceptions.CommandNotFoundException;
@@ -42,6 +43,9 @@ public class CommandService {
             } catch (Exception e) {
                 throw new CommandNotFoundException(new Exception("No data is available"));
             }
+        }
+        if (inputtedText != null && inputtedText.contains("/start") && inputtedText.length() > 6){
+            return new id031_OpenLink();
         }
         Button button = buttonRepo.findByNameAndLangId(inputtedText, getLanguage().getId());
         return getCommand(button);

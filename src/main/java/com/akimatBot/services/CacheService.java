@@ -34,7 +34,7 @@ public class CacheService {
         List<DeskDTO> deskDTOList = new ArrayList<>();
 
         for (Desk desk : deskRepo.getActiveDesks(waiterChatId)){
-            deskDTOList.add(desk.getDeskDTOFull(language, waiterChatId));
+            deskDTOList.add(desk.getDeskDTOFull(language));
         }
 
         return deskDTOList;

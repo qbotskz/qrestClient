@@ -23,7 +23,9 @@ public class Guest {
     private long id;
 
     @OneToMany(mappedBy = "guest")
+
 //    @LazyCollection(LazyCollectionOption.FALSE)
+
     private List<OrderItem> orderItems;
 
     @ManyToOne
@@ -31,11 +33,11 @@ public class Guest {
 
     @ManyToOne
     private User client;
+
     private Date createdDate;
 
     @Column(columnDefinition = "boolean default false")
     private boolean deleted;
-
 
     public Guest() {
 
@@ -80,19 +82,21 @@ public class Guest {
         return items;
     }
 
-    public GuestDTO getGuestDTO(Language language, long chatId) {
+    public GuestDTO getGuestDTO(Language language) {
         GuestDTO guestDTO = new GuestDTO();
         guestDTO.setId(this.getId());
 //        guestDTO.setCreatedDate(this.createdDate);
         guestDTO.setOrderItems(this.getOrderItemsDTO(language));
-        guestDTO.setMe(isMe(chatId));
+        if (this.getClient() != null) {
+            guestDTO.setUser(this.getClient().getDTO());
+        }
 
         return guestDTO;
     }
 
-    private boolean isMe(long chatId) {
-        return TelegramBotRepositoryProvider.getUserRepository().isMe(this.id, chatId);
-    }
+//    private boolean isMe(long chatId) {
+//        return TelegramBotRepositoryProvider.getUserRepository().isMe(this.id, chatId);
+//    }
 
     private List<OrderItemDTO> getOrderItemsDTO(Language language) {
         List<OrderItemDTO> items = new ArrayList<>();

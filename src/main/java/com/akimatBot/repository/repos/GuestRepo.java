@@ -36,5 +36,9 @@ public interface GuestRepo extends JpaRepository<Guest, Long> {
     @Modifying
     void delete(long id);
 
-    Guest findByClientChatId(long chatId);
+//    Guest findByClientChatIdAndFoodOrderId(long chatId, long foodOrderId);
+
+    List<Guest> findAllByClientChatId(long chatId);
+
+
 }

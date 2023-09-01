@@ -1,14 +1,14 @@
 package com.akimatBot.repository.repos;
 
-import com.akimatBot.entity.custom.FoodOrder;
-import com.akimatBot.entity.custom.Guest;
-import com.akimatBot.entity.custom.PaymentTypeReport;
+import com.akimatBot.entity.custom.*;
 import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.entity.enums.OrderType;
 import com.akimatBot.web.dto.PaymentTypeReportDTO;
+import org.hibernate.criterion.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,8 +65,11 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
     FoodOrder getLastClientOrder(long chatId, OrderType in_the_restaurant);
 
 
-    @Query("select guest.foodOrder from Guest guest where guest.client.chatId = ?1 and guest.foodOrder.orderStatus = 4")
-    FoodOrder getLastClientOrder2(long chatId, OrderType in_the_restaurant);
+//    @Query("select guest.foodOrder from Guest guest where guest.client.chatId = ?1 and guest.foodOrder.orderStatus = 4")
+//    FoodOrder getLastClientOrder2(long chatId, OrderType in_the_restaurant);
+
+    @Query("select guest.foodOrder from Guest guest where guest.client.chatId = ?1 and guest.foodOrder.orderStatus = 2")
+    List<FoodOrder> getDoneOrdersOfClient(long chatId);
 
 
 //    FoodOrder findLastByClientChatIdAndOrderTypeAndDoneIsFalse(long chatId, OrderType in_the_restaurant);
@@ -104,10 +107,10 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
 //    boolean existsByWaiterCodeAndOrderStatusNot(long code, OrderStatus orderStatus);
     boolean existsByOrderStatusNot(OrderStatus orderStatus);
 
-    @Query("select sum(fo.cheque.calculatedTotal) from FoodOrder fo where fo.waiter.code = ?1 and fo.createdDate > fo.waiter.currentShift.openingTime and fo.orderStatus = 2")
-    Double getClosedOrdersCash(Long code);
+//    @Query("select sum(fo.cheque.calculatedTotal) from FoodOrder fo where fo.waiter.code = ?1 and fo.createdDate > fo.waiter.currentShift.openingTime and fo.orderStatus = 2")
+//    Double getClosedOrdersCash(Long code);
 
-    @Query("select count (fo.desk.id) from FoodOrder fo where fo.waiter.id = ?1 and fo.orderStatus <> 2 and fo.orderStatus <> 3")
+    @Query("select count (fo.desk.id) from FoodOrder fo where fo.waiter.id = ?1 and (fo.orderStatus = 0 or fo.orderStatus = 1)")
     long getDesksSize(long userId);
 
     @Query(value = "update food_order set desk_id = ?2 where id = ?1", nativeQuery = true)
@@ -166,8 +169,8 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
     boolean isEmpty(long orderId);
 
 
-    @Query("select sum(fo.cheque.calculatedTotal) from FoodOrder fo where fo.createdDate between ?1 and ?2 and fo.orderStatus = 2")
-    Double getTotalBetween(Date openingTime, Date closingTime);
+//    @Query("select sum(fo.cheque.calculatedTotal) from FoodOrder fo where fo.createdDate between ?1 and ?2 and fo.orderStatus = 2")
+//    Double getTotalBetween(Date openingTime, Date closingTime);
 
 
 //    @Query(value = "select new PaymentTypeReport() (sum(p.amount)) AS id, pt as paymentType, (sum(p.amount)) as total from payment_type pt" +
@@ -201,4 +204,16 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
 
     @Query("select guest from Guest guest where guest.client.chatId = ?2 and guest.foodOrder.id = ?1")
     Guest getGuestOfOrder(long id, long chatId);
+
+
+    @Query("update FoodOrder fo set fo.orderStatus = 4 where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
+    @Modifying
+    @Transactional
+    void placeOrder(long chatId);
+
+    @Query("select fo from FoodOrder fo where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
+    FoodOrder getById(long chatId);
+
+    @Query("select (fo is not null ) from FoodOrder fo where fo.id = ?1 and (fo.orderStatus = 0 or fo.orderStatus = 1)")
+    Boolean isAccept(long orderId);
 }

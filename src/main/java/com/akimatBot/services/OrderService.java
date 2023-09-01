@@ -128,7 +128,7 @@ public class OrderService {
             orderItem = orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
 
-            foodOrder.getCheque().addTotal(orderItem.getTotal());
+//            foodOrder.getCheque().addTotal(orderItem.getTotal());
         }
 
 
@@ -139,9 +139,9 @@ public class OrderService {
 
         if (foodOrder.getCheque().getUseCashback()) {
             double cashBackUsed = user.getCashback();
-            if (cashBackUsed > foodOrder.getCheque().getCalculatedTotal()){
-                cashBackUsed = foodOrder.getCheque().getCalculatedTotal();
-            }
+//            if (cashBackUsed > foodOrder.getCheque().getCalculatedTotal()){
+//                cashBackUsed = foodOrder.getCheque().getCalculatedTotal();
+//            }
 
             foodOrder.getCheque().setUsedCashback(cashBackUsed);
 
@@ -231,7 +231,7 @@ public class OrderService {
             orderItem = orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
 
-            foodOrder.getCheque().addTotal(orderItem.getTotal());
+//            foodOrder.getCheque().addTotal(orderItem.getTotal());
         }
 
 
@@ -416,9 +416,9 @@ public class OrderService {
         }
 
 //        chequeRepo.addTotal(orderItem.getId());
-        Cheque cheque1e = orderItem.getGuest().getFoodOrder().getCheque();
-        cheque1e.addTotal(orderItem.getPrice());
-        chequeRepo.save(cheque1e);
+//        Cheque cheque1e = orderItem.getGuest().getFoodOrder().getCheque();
+////        cheque1e.addTotal(orderItem.getPrice());
+//        chequeRepo.save(cheque1e);
 
         AnswerAddToCartDTO answerAddToCartDTO = new AnswerAddToCartDTO();
         answerAddToCartDTO.setOrderItem(orderItem.getOrderItemDTO(language));
@@ -451,9 +451,9 @@ public class OrderService {
         }
         orderItem = orderItemRepository.save(orderItem);
 
-        Cheque cheque1e = orderItem.getGuest().getFoodOrder().getCheque();
-        cheque1e.addTotal(orderItem.getPrice());
-        chequeRepo.save(cheque1e);
+//        Cheque cheque1e = orderItem.getGuest().getFoodOrder().getCheque();
+//        cheque1e.addTotal(orderItem.getPrice());
+//        chequeRepo.save(cheque1e);
 
         return orderItem;
     }
@@ -600,7 +600,7 @@ public class OrderService {
             int quan =  orderItem.getQuantity();
             int forMinus = price * (count - quan);
 
-            cheque.addTotal(forMinus);
+//            cheque.addTotal(forMinus);
             chequeRepo.save(cheque);
 
             if (count == 0) {
@@ -624,7 +624,7 @@ public class OrderService {
 
         FoodOrder foodOrder = orderItem.getGuest().getFoodOrder();
         Cheque cheque = foodOrder.getCheque();
-        cheque.addTotal(-(orderItem.getTotal()));
+//        cheque.addTotal(-(orderItem.getTotal()));
         chequeRepo.save(cheque);
 
 
@@ -681,7 +681,7 @@ public class OrderService {
 //            cheque.addTotal(orderItem.getTotal());
 //            chequeRepo.save(cheque);
 
-            return oldOrder.getDesk().getDeskDTOFull(Language.ru, chatId);
+            return oldOrder.getDesk().getDeskDTOFull(Language.ru);
 
         }
         else return null;
@@ -711,7 +711,7 @@ public class OrderService {
             Double excess = orderItemRepository.getTotalInCartsOfOrder(orderId);
             if (excess != null) {
                 Cheque cheque = foodOrder.getCheque();
-                cheque.minusTotal(excess);
+//                cheque.minusTotal(excess);
                 cheque = chequeRepo.save(cheque);
                 foodOrder.setCheque(cheque);
             }
@@ -749,7 +749,7 @@ public class OrderService {
         Cheque cheque = payment.getCheque();
         paymentRepo.delete(payment);
 
-        cheque.calculate();
+//        cheque.calculate();
         chequeRepo.save(cheque);
 
         return cheque;
@@ -765,7 +765,7 @@ public class OrderService {
         payment.setPaymentType(paymentTypeRepo.findById(paymentTypeId));
 
         paymentRepo.save(payment);
-        cheque.calculate();
+//        cheque.calculate();
         chequeRepo.save(cheque);
 
         return cheque;
@@ -776,15 +776,15 @@ public class OrderService {
         Cheque cheque = chequeRepo.findById(chequeDTO.getId());
 //        cheque.setCalculatedTotal();
 //        chequeRepo.save(cheque);
-        if (cheque.getForPayment() == 0) {
-            FoodOrder foodOrder = cheque.getOrder();
-            foodOrder.setCompletionDate(new Date());
-            foodOrder.setOrderStatus(OrderStatus.DONE);
-            deskRepo.setCurrentOrderNull(cheque.getOrder().getDesk().getId());
-            this.save(foodOrder);
-            webSocketService.printPayment(foodOrder.getId());
-            return true;
-        }
+//        if (cheque.getForPayment() == 0) {
+//            FoodOrder foodOrder = cheque.getOrder();
+//            foodOrder.setCompletionDate(new Date());
+//            foodOrder.setOrderStatus(OrderStatus.DONE);
+//            deskRepo.setCurrentOrderNull(cheque.getOrder().getDesk().getId());
+//            this.save(foodOrder);
+//            webSocketService.printPayment(foodOrder.getId());
+//            return true;
+//        }
         return false;
     }
 
@@ -962,7 +962,7 @@ public class OrderService {
         GeneralShift generalShift = generalShiftService.getOpenedShift();
         reportDailyDTO.setGeneralShift(generalShift.getDTO());
         reportDailyDTO.setCurrentEmployee(employeeService.findByCode(code).getDTO());
-        reportDailyDTO.setOrderTotal(orderRepo.getTotalBetween(generalShift.getOpeningTime(), new Date()));
+//        reportDailyDTO.setOrderTotal(orderRepo.getTotalBetween(generalShift.getOpeningTime(), new Date()));
         reportDailyDTO.setOrderQuantity(orderRepo.getQuantityBetween(generalShift.getOpeningTime(), new Date()));
         return reportDailyDTO;
     }
@@ -971,7 +971,7 @@ public class OrderService {
         GeneralShift generalShift = generalShiftService.getOpenedShift();
         reportDailyWithTaxDTO.setGeneralShift(generalShift.getDTO());
         reportDailyWithTaxDTO.setCurrentEmployee(employeeService.findByCode(code).getDTO());
-        reportDailyWithTaxDTO.setTotal(orderRepo.getTotalBetween(generalShift.getOpeningTime(), new Date()));
+//        reportDailyWithTaxDTO.setTotal(orderRepo.getTotalBetween(generalShift.getOpeningTime(), new Date()));
 //        List<PaymentTypeReport> objects = orderRepo.getTotalForPaymentTypesJPQL(generalShift.getOpeningTime(), new Date());
 //        reportDailyWithTaxDTO.setPaymentTypeReports(getDTO(orderRepo.getTotalForPaymentTypes(generalShift.getOpeningTime(), new Date())));
         reportDailyWithTaxDTO.setPaymentTypeReports(getDTO(orderRepo.getTotalForPaymentTypesJPQL(generalShift.getOpeningTime(), new Date())));
@@ -1014,4 +1014,56 @@ public class OrderService {
         }
         return dtos;
     }
+
+//////////////////////////////////  ༼ つ ಥ_ಥ ༽つ   ////////////////////////////////////////////////
+
+
+//    public List<HistoryOfOrdersDTO> getOrdersOfDone(User user){
+//        List<HistoryOfOrdersDTO> historyList = new ArrayList<>();
+//        List<Guest> guest = guestRepo.findAllByClientChatId(user.getChatId());
+//        if (guest.size()!=0){
+//            List<FoodOrder> orders = new ArrayList<>();
+//            for (Guest g: guest){
+//                FoodOrder foodOrder = orderRepo.findById(g.getFoodOrder().getId());
+//                if (foodOrder!=null){
+//                    orders.add(foodOrder);
+//                }
+//            }
+//            if (orders.size()!=0){
+//                for (FoodOrder o: orders){
+//                    HistoryOfOrdersDTO history = new HistoryOfOrdersDTO();
+//                    history.setId(o.getId());
+//                    history.setDate(o.getCreatedDate());
+//                    history.setPrice(String.valueOf(o.getPrice()));
+//                    historyList.add(history);
+//                }
+//            }
+//        }
+//        return historyList;
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////  (☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)   /////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
 }

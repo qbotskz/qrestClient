@@ -89,7 +89,7 @@ public class WaiterService {
             waiterDTO.setName(user.getFullName());
             waiterDTO.setId(user.getId());
             waiterDTO.setCode(user.getCode());
-            waiterDTO.setClosedOrdersCash(orderRepository.getClosedOrdersCash(user.getCode()));
+//            waiterDTO.setClosedOrdersCash(orderRepository.getClosedOrdersCash(user.getCode()));
             waiterDTO.setDeskSize(orderRepository.getDesksSize(user.getId()));
             waiterDTOList.add(waiterDTO);
         }

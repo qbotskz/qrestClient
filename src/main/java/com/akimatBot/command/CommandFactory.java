@@ -25,6 +25,9 @@ public class CommandFactory {
             case 6:
                 return new id006_FoodsList();
 
+            case 31:
+                return new id031_OpenLink();
+
 
         }
         return null;

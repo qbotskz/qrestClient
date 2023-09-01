@@ -72,7 +72,7 @@ public class DeskControllerDesktop {
         List<DeskDTO> ls = new ArrayList<>();
         for (Desk desk : desks){
             if (desk != null) {
-                ls.add(desk.getDeskDTOFull(Language.ru, null));
+                ls.add(desk.getDeskDTOFull(Language.ru));
             }
         }
 
@@ -90,6 +90,6 @@ public class DeskControllerDesktop {
     public DeskDTO getOne(@PathVariable(name = "id") long id,
                           @RequestHeader(value="code") long code){
         Desk desk = deskRepo.findById(id);
-       return desk.getDeskDTOFull(Language.ru, code);
+       return desk.getDeskDTOFull(Language.ru);
     }
 }

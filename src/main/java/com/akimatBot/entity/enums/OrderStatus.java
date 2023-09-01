@@ -15,8 +15,6 @@ public enum OrderStatus {
     DONE,
 
     DELETED,
-    IN_CART_CLIENT,
-
     NEW
 
 
