@@ -48,6 +48,7 @@ public class Desk {
         deskDTO.setId(this.getId());
         deskDTO.setNumber(this.getNumber());
         deskDTO.setFoodOrderStatus(getFoodOrderStatus(this));
+        deskDTO.setHall(this.getHall().getDTONotFull());
         return deskDTO;
     }
 

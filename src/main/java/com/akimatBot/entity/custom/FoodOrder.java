@@ -1,7 +1,6 @@
 package com.akimatBot.entity.custom;
 
 import com.akimatBot.entity.enums.Language;
-import com.akimatBot.entity.enums.OrderItemStatus;
 import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.entity.enums.OrderType;
 import com.akimatBot.entity.standart.Employee;
@@ -13,13 +12,10 @@ import com.akimatBot.web.dto.FoodOrderDTO;
 import com.akimatBot.web.dto.GuestDTO;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.*;
 
-//@Entity(name = "orders")
 @Getter
 @Setter
 @Entity
@@ -113,80 +109,28 @@ public class FoodOrder {
 //        foodOrderDTO.setCompletionDate(this.completionDate);
         foodOrderDTO.setCheque(this.cheque.getChequeDTO());
         foodOrderDTO.setGuests(getGuestsDTO(language));
-//        foodOrderDTO.setPersonalCanChange(getOpportunity(code));
         foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
 
         return foodOrderDTO;
     }
-//    public FoodOrderDTO getFoodOrderDTO(Language language) {
-//
-//        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
-//        foodOrderDTO.setId(this.id);
-//        foodOrderDTO.setOrderStatus(this.orderStatus);
-//        foodOrderDTO.setDeliverNeed(this.deliverNeed);
-//        foodOrderDTO.setAddress(this.address);
-//        foodOrderDTO.setOrderType(this.orderType);
-//        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
-//        foodOrderDTO.setCreatedDateInDate(DateUtil.getDbMmYyyyHhMmSs(this.createdDate));
-////        foodOrderDTO.setCompletionDate(this.completionDate);
-//        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-////        foodOrderDTO.setGuests(getGuestsDTO(language));
-////        foodOrderDTO.setPersonalCanChange(getOpportunity(code));
-//        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
-//
-//        return foodOrderDTO;
-//    }
+    public FoodOrderDTO getClientFoodOrderDTO(Language language) {
 
-//    public FoodOrderDTO getFoodOrderDTO(Language language) {
-//
-//        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
-//        foodOrderDTO.setId(this.id);
-//        foodOrderDTO.setOrderStatus(this.orderStatus);
-//        foodOrderDTO.setDeliverNeed(this.deliverNeed);
-//        foodOrderDTO.setAddress(this.address);
-//        foodOrderDTO.setOrderType(this.orderType);
-//        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
-//        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-//        foodOrderDTO.setGuests(getGuestsDTO(language));
-////        foodOrderDTO.setPersonalCanChange(getOpportunityByChatId(chatId));
-//        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
-//
-//        return foodOrderDTO;
-//    }
-
-
-
-    private Boolean getOpportunityByChatId(Long chatId) {
-        if (chatId != null) {
-            return this.waiter.getChatId() == chatId &&
-                    this.orderStatus != OrderStatus.DONE;
-        }
-        return null;
-    }
-//    public FoodOrderDTO getFoodOrderDTOMy(Language language) {
-//
-//        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
-//        foodOrderDTO.setId(this.id);
-//        foodOrderDTO.setOrderStatus(this.orderStatus);
-//        foodOrderDTO.setDeliverNeed(this.deliverNeed);
-//        foodOrderDTO.setAddress(this.address);
-//        foodOrderDTO.setOrderType(this.orderType);
-//        foodOrderDTO.setCreatedDate(this.createdDate);
+        FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
+        foodOrderDTO.setId(this.id);
+        foodOrderDTO.setOrderStatus(this.orderStatus);
+        foodOrderDTO.setDeliverNeed(this.deliverNeed);
+        foodOrderDTO.setAddress(this.address);
+        foodOrderDTO.setOrderType(this.orderType);
+        foodOrderDTO.setCreatedDate(DateUtil.getOnlyOClock(this.createdDate));
 //        foodOrderDTO.setCompletionDate(this.completionDate);
-//        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
-//        foodOrderDTO.setGuests(getGuestsDTO(language));
-//        foodOrderDTO.setPersonalCanChange(true);
-//
-//        return foodOrderDTO;
-//    }
+        foodOrderDTO.setCheque(this.cheque.getChequeDTO());
+        foodOrderDTO.setGuests(getGuestsDTO(language));
+        foodOrderDTO.setWaiter(WaiterService.getWaiterByUserSimple(this.getWaiter()));
+        foodOrderDTO.setDesk(this.getDesk().getDeskDTONotFull());
 
-    private Boolean getOpportunity(Long code) {
-        if (code != null) {
-            return this.waiter.getCode().equals(code) &&
-                    this.orderStatus != OrderStatus.DONE;
-        }
-        return null;
+        return foodOrderDTO;
     }
+
 
     private List<GuestDTO> getGuestsDTO(Language language) {
 
@@ -200,31 +144,5 @@ public class FoodOrder {
     }
 
 
-//    @Override
-//    public String toString() {
-//        return "FoodOrder{" +
-//                "id=" + id +
-//                ", createdDate=" + createdDate +
-//                ", client=" + client +
-//                ", total=" + total +
-//                ", useCashback=" + useCashback +
-//                ", usedCashback=" + usedCashback +
-//                ", addedCashback=" + addedCashback +
-//                ", orderItems=" + orderItems +
-//                ", deliverNeed=" + deliverNeed +
-//                ", address='" + address + '\'' +
-//                ", deliveryPrice=" + deliveryPrice +
-//                ", managerChatId=" + managerChatId +
-//                ", done=" + done +
-//                ", completionDate=" + completionDate +
-//                ", paymTechOrderId=" + paymTechOrderId +
-//                ", paid=" + paid +
-//                '}';
-//    }
 
-
-
-//    public void addTotal(int totalPrice) {
-//        this.total += totalPrice;
-//    }
 }

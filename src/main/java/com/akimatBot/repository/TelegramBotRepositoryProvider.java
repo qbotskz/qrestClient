@@ -130,6 +130,12 @@ public class TelegramBotRepositoryProvider {
     @Getter
     @Setter
     private static AboutRestaurantRepo aboutRestaurantRepo;
+    @Getter
+    @Setter
+    private static GradeTextTemplateRepo gradeTextTemplateRepo;
+    @Getter
+    @Setter
+    private static GradeRepo gradeRepo;
 
 
 
@@ -145,7 +151,8 @@ public class TelegramBotRepositoryProvider {
                                          DeskRepo deskRepo, CartItemRepo cartItemRepo,OrderItemRepository orderItemRepository,
                                          GuestRepo guestRepo,ChequeRepo chequeRepo, WaiterShiftRepo waiterShiftRepo,
                                          PaymentTypeRepo paymentTypeRepo,PaymentRepo paymentRepo,
-                                         HallRepo hallRepo,EmployeeRepository employeeRepository,AboutRestaurantRepo aboutRestaurantRepo){
+                                         HallRepo hallRepo,EmployeeRepository employeeRepository
+            ,GradeTextTemplateRepo gradeTextTemplateRepo,GradeRepo gradeRepo,AboutRestaurantRepo aboutRestaurantRepo){
 
         setMessageRepository(messageRepository);
         setKeyboardMarkUpRepository(keyboardMarkUpRepository);
@@ -174,6 +181,8 @@ public class TelegramBotRepositoryProvider {
         setHallRepo(hallRepo);
         setEmployeeRepository(employeeRepository);
         setAboutRestaurantRepo(aboutRestaurantRepo);
+        setGradeTextTemplateRepo(gradeTextTemplateRepo);
+        setGradeRepo(gradeRepo);
     }
 
 }

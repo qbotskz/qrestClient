@@ -45,9 +45,8 @@ public class FoodOrderDTO {
 
     private OrderStatus orderStatus;
 
-//    private Boolean personalCanChange;
-
     private WaiterDTO waiter;
 
+    private DeskDTO desk;
 
 }

@@ -128,7 +128,7 @@ public class ClientOrderService {
     public List<FoodOrderDTO> getDoneOrdersOfClient(long chatId) {
         List<FoodOrderDTO> foodOrderDTOS = new ArrayList<>();
         for (FoodOrder foodOrder : orderRepository.getDoneOrdersOfClient(chatId)){
-            foodOrderDTOS.add(foodOrder.getFoodOrderDTO(LanguageService.getLanguage(chatId)));
+            foodOrderDTOS.add(foodOrder.getClientFoodOrderDTO(LanguageService.getLanguage(chatId)));
         }
         return foodOrderDTOS;
     }

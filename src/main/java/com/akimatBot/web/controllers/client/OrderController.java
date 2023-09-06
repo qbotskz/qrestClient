@@ -170,7 +170,7 @@ public class OrderController {
     public ResponseEntity<Object> getOneOrders(@PathVariable("id") long id,
                                                @RequestHeader("chatId") long chatId){
         FoodOrder order =  orderRepo.findOrderById(id);
-            return new ResponseEntity<>(order.getFoodOrderDTO(LanguageService.getLanguage(chatId)),
+            return new ResponseEntity<>(order.getClientFoodOrderDTO(LanguageService.getLanguage(chatId)),
                     HttpStatus.OK);
     }
 

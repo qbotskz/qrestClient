@@ -40,6 +40,13 @@ public class Hall {
 
         return hallDTO;
     }
+    public HallDTO getDTONotFull() {
+
+        HallDTO hallDTO = new HallDTO();
+        hallDTO.setId(this.id);
+        hallDTO.setName(this.name);
+        return hallDTO;
+    }
     public HallDTO getDTOSimple() {
 
         HallDTO hallDTO = new HallDTO();

@@ -13,10 +13,11 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int     id;
-    private StarGrade reviewGrade;
+
     private String reviewText;
+
     @ManyToOne
     private User user;
 
-    private Date uploadedDate;
+    private Date reviewDate;
 }
