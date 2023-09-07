@@ -194,7 +194,7 @@ public class ClientOrderService {
 
         String encodedMessageText = URLEncoder.encode(text, StandardCharsets.UTF_8);
 
-        String url = "https://api.telegram.org/bot"  + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText;
+        String url = "https://api.telegram.org/bot"  + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(url);
@@ -227,7 +227,7 @@ public class ClientOrderService {
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 
-        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText;
+        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(url);
