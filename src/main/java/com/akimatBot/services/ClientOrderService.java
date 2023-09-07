@@ -223,7 +223,7 @@ public class ClientOrderService {
     }
 
     private void sendMessage2(long chatId, FoodOrder foodOrder){
-        String callMessage = "<b>Стол №%s вызвал Вас!</b>";
+        String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" +  "<b>Стол №%s вызвал Вас!</b>";
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 
