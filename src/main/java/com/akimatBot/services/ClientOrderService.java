@@ -221,9 +221,43 @@ public class ClientOrderService {
             }
         }
     }
+    private void sendMessageToWaiters3(FoodOrder foodOrder) {
+        if (foodOrder.getWaiter()!=null){
+            if (foodOrder.getWaiter().getChatId()>0){
+                sendMessage3(foodOrder.getWaiter().getChatId(), foodOrder);
+            }
+        }else{
+            List<Employee> waiters = employeeService.getAllActiveWaiters();
+            for (Employee w: waiters){
+                if (w.getChatId()>0){
+                    sendMessage3(w.getChatId(), foodOrder);
+                }
+            }
+        }
+    }
 
     private void sendMessage2(long chatId, FoodOrder foodOrder){
         String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" +  "<b>Стол №%s вызвал Вас!</b>";
+
+        String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
+
+        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(url);
+
+            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+                System.out.println("Response status: " + response.getStatusLine());
+                // Дополнительная обработка ответа, если необходимо
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void sendMessage3(long chatId, FoodOrder foodOrder){
+        String callMessage = "\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35" + "\n\n" +  "<b>Стол с №%s запрашивает Счет\uD83D\uDCB5</b>";
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 
@@ -351,13 +385,16 @@ public class ClientOrderService {
             requestCheque.setCreatedDate(new Date());
             requestCheque.setFoodOrder(foodOrder);
             requestChequeRepo.save(requestCheque);
-            if (foodOrder.getWaiter() != null){
-                sendMessage(String.format(text, foodOrder.getDesk().getNumber()),foodOrder.getWaiter().getChatId() );
-            }
+            sendMessageToWaiters3(foodOrder);
             return foodOrder.getCheque();
         }
         return null;
     }
+
+
+
+
+
 
     public boolean isAccept(long orderId) {
 
