@@ -168,8 +168,7 @@ public class ClientOrderService {
     public void place(long chatId) {
         orderItemRepository.orderingByClient(chatId);
         orderRepository.placeOrder(chatId);
-//        sendMessageToWaiters(chatId); //Отправка сообщение официанту
-
+        sendMessageToWaiters(chatId); //Отправка сообщение официанту
     }
 
     private void sendMessageToWaiters(long chatId) {
@@ -189,13 +188,13 @@ public class ClientOrderService {
     }
 
     private void sendMessage(long chatId, Desk desk){
-        String text = "Номер стола: " + desk.getNumber() + "\n"
-        + desk.getHall().getName() + "\n"
-                + "Заказывает что-то";
+        String text = "<b>Гость оформил заказ</b>" + "\n" + "\n" + "<b>Номер стола: </b>" + desk.getNumber() + "\n"
+        +"<b>Зал: </b>" +  desk.getHall().getName() + "\n" + "\n"
+                + "Для принятия заказа, зайдите в раздел <b>\"Новые\"</b>";
 
         String encodedMessageText = URLEncoder.encode(text, StandardCharsets.UTF_8);
 
-        String url = "https://api.telegram.org/bot6147742087:AAEwAQfIIs04vNSK6sGX5wfwK68gUhmkHd8/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText;
+        String url = "https://api.telegram.org/bot"  + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText;
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(url);
@@ -224,7 +223,7 @@ public class ClientOrderService {
     }
 
     private void sendMessage2(long chatId, FoodOrder foodOrder){
-        String callMessage = "Стол с номером %s вызывает официанта!";
+        String callMessage = "<b>Стол №%s вызвал Вас!</b>";
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 

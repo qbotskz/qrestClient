@@ -153,8 +153,6 @@ public class OrderController {
         }
     }
 
-
-
     @GetMapping("/getOrder/done")
     public ResponseEntity<Object> getDoneOrders(@RequestHeader("chatId") long chatId){
         List<FoodOrderDTO> order = clientOrderService.getDoneOrdersOfClient(chatId);
