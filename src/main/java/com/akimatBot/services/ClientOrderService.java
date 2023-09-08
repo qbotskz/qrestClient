@@ -173,27 +173,28 @@ public class ClientOrderService {
 
     private void sendMessageToWaiters(long chatId) {
         FoodOrder foodOrder = orderRepository.getById(chatId);
+
+        String text = "<b>Гость оформил заказ</b>" + "\n" + "\n" + "<b>Номер стола: </b>" + foodOrder.getDesk().getNumber() + "\n"
+                +"<b>Зал: </b>" +  foodOrder.getDesk().getHall().getName() + "\n" + "\n"
+                + "Для принятия заказа, зайдите в раздел <b>\"Новые\"</b>";
+
+        String encodedMessageText = URLEncoder.encode(text, StandardCharsets.UTF_8);
+
         if (foodOrder.getWaiter()!=null){
             if (foodOrder.getWaiter().getChatId()>0){
-                sendMessage(foodOrder.getWaiter().getChatId(), foodOrder.getDesk());
+                sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
         }else{
             List<Employee> waiters = employeeService.getAllActiveWaiters();
             for (Employee w: waiters){
                 if (w.getChatId()>0){
-                    sendMessage(w.getChatId(), foodOrder.getDesk());
+                    sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
 
-    private void sendMessage(long chatId, Desk desk){
-        String text = "<b>Гость оформил заказ</b>" + "\n" + "\n" + "<b>Номер стола: </b>" + desk.getNumber() + "\n"
-        +"<b>Зал: </b>" +  desk.getHall().getName() + "\n" + "\n"
-                + "Для принятия заказа, зайдите в раздел <b>\"Новые\"</b>";
-
-        String encodedMessageText = URLEncoder.encode(text, StandardCharsets.UTF_8);
-
+    private void sendMessage(long chatId, String encodedMessageText){
         String url = "https://api.telegram.org/bot"  + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -201,79 +202,52 @@ public class ClientOrderService {
 
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
                 System.out.println("Response status: " + response.getStatusLine());
-                // Дополнительная обработка ответа, если необходимо
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     private void sendMessageToWaiters2(FoodOrder foodOrder) {
+
+        String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" +  "<b>Стол №%s вызвал Вас!</b>";
+
+        String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
+
+
         if (foodOrder.getWaiter()!=null){
             if (foodOrder.getWaiter().getChatId()>0){
-                sendMessage2(foodOrder.getWaiter().getChatId(), foodOrder);
+                sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
         }else{
             List<Employee> waiters = employeeService.getAllActiveWaiters();
             for (Employee w: waiters){
                 if (w.getChatId()>0){
-                    sendMessage2(w.getChatId(), foodOrder);
+                    sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
     private void sendMessageToWaiters3(FoodOrder foodOrder) {
+
+        String callMessage = "\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35" + "\n\n" +  "<b>Стол с №%s запрашивает Счет\uD83D\uDCB5</b>";
+
+        String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
+
+
         if (foodOrder.getWaiter()!=null){
             if (foodOrder.getWaiter().getChatId()>0){
-                sendMessage3(foodOrder.getWaiter().getChatId(), foodOrder);
+                sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
         }else{
             List<Employee> waiters = employeeService.getAllActiveWaiters();
             for (Employee w: waiters){
                 if (w.getChatId()>0){
-                    sendMessage3(w.getChatId(), foodOrder);
+                    sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
 
-    private void sendMessage2(long chatId, FoodOrder foodOrder){
-        String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" +  "<b>Стол №%s вызвал Вас!</b>";
-
-        String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
-
-        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(url);
-
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                System.out.println("Response status: " + response.getStatusLine());
-                // Дополнительная обработка ответа, если необходимо
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void sendMessage3(long chatId, FoodOrder foodOrder){
-        String callMessage = "\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35" + "\n\n" +  "<b>Стол с №%s запрашивает Счет\uD83D\uDCB5</b>";
-
-        String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
-
-        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(url);
-
-            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                System.out.println("Response status: " + response.getStatusLine());
-                // Дополнительная обработка ответа, если необходимо
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public boolean cancelOrderItem(OrderItemDeleteDTO item) {

@@ -30,7 +30,7 @@ public class id031_OpenLink extends Command {
                 if ( user.getCurrentGuest() == null
                         ||
                         user.getCurrentGuest().getFoodOrder().getDesk().getId() == id){
-                    sendWebApp(id);
+                    sendWebApp(id, user);
                 }
                 else {
                     sendMessage("Вы сидите за столом №" +
@@ -60,7 +60,11 @@ public class id031_OpenLink extends Command {
 
 
 
-    private void sendWebApp(long deskId) throws TelegramApiException {
+    private void sendWebApp(long deskId, User user) throws TelegramApiException {
+
+        if (user.getLinkMessageId() != null){
+            deleteMessage(user.getLinkMessageId().intValue());
+        }
 
         System.out.println("desk of client = " + deskId);
         WebAppData webAppData = new WebAppData();
@@ -79,7 +83,9 @@ public class id031_OpenLink extends Command {
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
         replyKeyboardMarkup.setKeyboard(Arrays.asList(Arrays.asList(inlineKeyboardButton)));
 
-        sendMessageWithKeyboard("Нажмите кнопку", replyKeyboardMarkup);
+        long linkId = sendMessageWithKeyboard("Нажмите кнопку", replyKeyboardMarkup);
+        user.setLinkMessageId(linkId);
+        userRepository.save(user);
     }
 
 

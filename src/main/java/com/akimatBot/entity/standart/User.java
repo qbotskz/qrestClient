@@ -37,6 +37,7 @@ public class User {
     @ManyToOne
     private Guest currentGuest;
 
+    private Long linkMessageId;
 
     public UserDTO getDTO() {
         UserDTO userDTO = new UserDTO();
