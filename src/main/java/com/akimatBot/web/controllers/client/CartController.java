@@ -82,12 +82,15 @@ public class CartController {
 
 
     @PostMapping("/addToCart")
-    public Map<Object, Object> addToCart(@RequestParam("foodId") long bookId, @RequestParam("chatId") long chatId){
-
+    public Map<Object, Object> addToCart(@RequestParam("foodId") long foodId, @RequestParam("chatId") long chatId){
         try {
-            cartItemService.addToCart(bookId, chatId);
-            return getCart(chatId);
-        }catch (Exception e){
+            boolean added = cartItemService.addToCart(foodId, chatId);
+            var ans = getCart(chatId);
+            if (!added) {
+                ans.put("answer", "Food with foodId = " + foodId + " is over!");
+            }
+            return ans;
+        } catch (Exception e) {
             e.printStackTrace();
             Map<Object, Object> ans = new TreeMap<>();
             ans.put("answer" , "error");
@@ -116,28 +119,24 @@ public class CartController {
         Employee user = employeeService.getByChatId(chatId);
         Map<Object, Object> data = new TreeMap<>();
 
-
-
-        List<Map<Object, Object>> books = new ArrayList<>();
+        List<Map<Object, Object>> foods = new ArrayList<>();
         for (CartItem cartItem : cartItems){
             Map<Object, Object> ans = new TreeMap<>();
             ans.put("id" , cartItem.getId());
             ans.put("quantity" , cartItem.getQuantity());
             ans.put("item" , cartItem.getFood().getJson(user.getLanguage()));
-            books.add(ans);
+            foods.add(ans);
         }
-
 
         Map<Object, Object> prop = new TreeMap<>();
 //        prop.put("cashback", user.getCashback());
         prop.put("deliveryPrice", 1500);
 
-
         Map<Object, Object> userInfo = new TreeMap<>();
         userInfo.put("fullName", user.getFullName());
         userInfo.put("phoneNumber", user.getPhone());
 
-        data.put("cartItems", books);
+        data.put("cartItems", foods);
         data.put("properties", prop);
         data.put("userInfo", userInfo);
         return data ;

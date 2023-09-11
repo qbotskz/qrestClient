@@ -16,4 +16,5 @@ import java.util.TreeMap;
 public class AnswerAddToCartDTO {
     ChequeDTO cheque;
     OrderItemDTO orderItem;
+    String error;
 }

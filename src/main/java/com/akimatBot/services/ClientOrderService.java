@@ -139,26 +139,36 @@ public class ClientOrderService {
         Guest guest = userService.getCurrentGuestOfUser(chatId);
         OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guest.getId() , OrderItemStatus.IN_CART_CLIENT);
 
-        if (orderItem != null){
-            orderItem.addQuantity();
-            orderItemRepository.save(orderItem);
-        }
-        else {
-            Food food = foodService.findById(foodId);
-
-            orderItem = new OrderItem();
-            orderItem.setOrderItemStatus(OrderItemStatus.IN_CART_CLIENT);
-            orderItem.setCreatedDate(new Date());
-            orderItem.setQuantity(1);
-            orderItem.setPrice(food.getPrice());
-            orderItem.setGuest(guest);
-            orderItem.setFood(food);
-            orderItem = orderItemRepository.save(orderItem);
-        }
-
+        Food food = foodService.findById(foodId);
 
         AnswerAddToCartDTO answerAddToCartDTO = new AnswerAddToCartDTO();
-        answerAddToCartDTO.setOrderItem(orderItem.getOrderItemDTO(LanguageService.getLanguage(chatId)));
+
+        if (food != null && food.getActivated() && (food.getRemains() == null || food.getRemains() > 0)) {
+            if (orderItem != null) {
+                orderItem.addQuantity();
+                orderItemRepository.save(orderItem);
+            } else {
+                orderItem = new OrderItem();
+                orderItem.setOrderItemStatus(OrderItemStatus.IN_CART_CLIENT);
+                orderItem.setCreatedDate(new Date());
+                orderItem.setQuantity(1);
+                orderItem.setPrice(food.getPrice());
+                orderItem.setGuest(guest);
+                orderItem.setFood(food);
+                orderItem = orderItemRepository.save(orderItem);
+            }
+            if (food.getRemains() != null) {
+                food.setRemains(food.getRemains() - 1);
+                foodService.save(food);
+            }
+        } else {
+            answerAddToCartDTO.setError("Food with foodId = " + foodId + " is over!");
+        }
+
+        if (orderItem != null) {
+            answerAddToCartDTO.setOrderItem(orderItem.getOrderItemDTO(LanguageService.getLanguage(chatId)));
+        }
+
         Cheque cheque = chequeRepo.getByGuest(guest.getId());
         answerAddToCartDTO.setCheque(cheque.getChequeDTO());
 
@@ -278,6 +288,10 @@ public class ClientOrderService {
         OrderItem orderItem = orderItemRepository.findById(orderItemId);
 
         if (orderItem != null && orderItem.getOrderItemStatus().equals(OrderItemStatus.IN_CART_CLIENT)){
+
+            Food food = orderItem.getFood();
+            food.setRemains(food.getRemains() + 1);
+            foodService.save(food);
 
             if (orderItem.getQuantity() == 1){
                 orderItemRepository.setDelete(orderItem);

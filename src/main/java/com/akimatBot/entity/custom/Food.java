@@ -32,6 +32,7 @@ public class Food {
     private Integer price;
 
     private Long remains;
+    private Long orders;
 
     private Date lastChanged;
 

@@ -54,44 +54,43 @@ public class CartItemService {
         return cartItemRepo.save(newCartItem);
     }
 
+    private boolean addToCart(CartItem cartItem, Food food) {
+        //System.out.println(food.getRemains());
+        if (food.getRemains() <= 0) {
+            return false;
+        } else if (!food.getActivated()) {
+            return false;
+        }
+        cartItem.quantityPlusOne();
+        this.save(cartItem);
+        food.setRemains(food.getRemains() - 1);
+        foodService.save(food);
+        return true;
+    }
+
     @Transactional
-    public CartItem addToCart(Long bookId, long chatId){
+    public boolean addToCart(Long foodId, long chatId){
+        Food food = foodService.findById(foodId);
+        CartItem cartItem = this.findByBookAndChatId(food, chatId);
 
-        CartItem cartItem;
-        cartItem = this.findByBookAndChatId(foodService.findById(bookId), chatId);
+        if (cartItem == null) {
+            cartItem = new CartItem(chatId, food, 0);
+        }
 
-        if (cartItem == null){
-            cartItem = new CartItem();
-            cartItem.setQuantity(1);
-            cartItem.setFood(foodService.findById(bookId));
-            cartItem.setClientChatId(chatId);
-            this.save(cartItem);
-        }
-        else {
-            cartItem.quantityPlusOne();
-            cartItem =  this.save(cartItem);
-        }
-        return cartItem;
+        return addToCart(cartItem, food);
     }
     @Transactional
-    public CartItem addToCartFromWaiter(long bookId, long tableId){
-
-        CartItem cartItem;
-        cartItem = this.findByBookAndTable(bookId, tableId);
+    public boolean addToCartFromWaiter(long foodId, long tableId){
+        Food food = foodService.findById(foodId);
+        CartItem cartItem = this.findByBookAndTable(foodId, tableId);
 
         if (cartItem == null){
             cartItem = new CartItem();
             cartItem.setDesk(deskRepo.getOne(tableId));
             cartItem.setQuantity(1);
-            cartItem.setFood(foodService.findById(bookId));
-//            cartItem.setClientChatId(chatId);
-            this.save(cartItem);
+            cartItem.setFood(foodService.findById(foodId));
         }
-        else {
-            cartItem.quantityPlusOne();
-            cartItem =  this.save(cartItem);
-        }
-        return cartItem;
+        return addToCart(cartItem, food);
     }
 
     @Transactional
