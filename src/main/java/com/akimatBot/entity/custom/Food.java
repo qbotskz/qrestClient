@@ -43,7 +43,6 @@ public class Food {
     private FoodCategory foodCategory;
 
 //    private String photo_url;
-
     private Boolean activated;
 //    @Column(nullable = true)
 //    private boolean hasSpecialOffer;
