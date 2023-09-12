@@ -158,8 +158,7 @@ public class OrderController {
         List<FoodOrderDTO> order = clientOrderService.getDoneOrdersOfClient(chatId);
         if(order != null && order.size() != 0) {
             return new ResponseEntity<>(order, HttpStatus.OK);
-        }
-        else{
+        } else {
             return new ResponseEntity<>(new AnswerDTO("order is empty").getJson(), HttpStatus.BAD_REQUEST);
         }
     }
