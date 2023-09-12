@@ -17,27 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.spec.RSAOtherPrimeInfo;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class ClientOrderService {
@@ -157,10 +143,11 @@ public class ClientOrderService {
                 orderItem.setFood(food);
                 orderItem = orderItemRepository.save(orderItem);
             }
+            food.setCountOrders(food.getCountOrders() + 1);
             if (food.getRemains() != null) {
                 food.setRemains(food.getRemains() - 1);
-                foodService.save(food);
             }
+            foodService.save(food);
         } else {
             answerAddToCartDTO.setError("Food with foodId = " + foodId + " is over!");
         }
@@ -290,7 +277,12 @@ public class ClientOrderService {
         if (orderItem != null && orderItem.getOrderItemStatus().equals(OrderItemStatus.IN_CART_CLIENT)){
 
             Food food = orderItem.getFood();
-            food.setRemains(food.getRemains() + 1);
+            if (food.getRemains() != null) {
+                food.setRemains(food.getRemains() + 1);
+            }
+            if (food.getCountOrders() > 0) {
+                food.setCountOrders(food.getCountOrders() - 1);
+            }
             foodService.save(food);
 
             if (orderItem.getQuantity() == 1){
