@@ -78,7 +78,7 @@ public class id031_OpenLink extends Command {
 
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setWebApp(webAppInfo);
-        inlineKeyboardButton.setText("QRestoran");
+        inlineKeyboardButton.setText("Меню");
 
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
         replyKeyboardMarkup.setKeyboard(Arrays.asList(Arrays.asList(inlineKeyboardButton)));

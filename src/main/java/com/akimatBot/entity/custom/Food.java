@@ -1,6 +1,5 @@
 package com.akimatBot.entity.custom;
 
-import com.akimatBot.RestoranApplication;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.utils.DateUtil;
 import com.akimatBot.web.dto.FoodDTO;
@@ -32,7 +31,7 @@ public class Food {
     private Integer price;
 
     private Long remains;
-    private Long orders;
+    private Long countOrders = 0L;
 
     private Date lastChanged;
 
@@ -119,9 +118,9 @@ public class Food {
         foodDTO.setLastChanged(DateUtil.getDbMmYyyyHhMmSs(this.getLastChanged()));
         foodDTO.setKitchens(getKitchensDTO());
         foodDTO.setPhotoUrl(this.getPhotoUrl());
+        foodDTO.setCountOrders(this.getCountOrders());
 
         return foodDTO;
-
     }
 
     private List<KitchenDTO> getKitchensDTO() {
