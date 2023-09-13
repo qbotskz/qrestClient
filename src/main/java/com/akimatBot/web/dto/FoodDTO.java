@@ -26,6 +26,7 @@ public class FoodDTO {
     private String description;
     private Integer price;
     private Long remains;
+    private Long countOrders;
     private String lastChanged;
     private RestaurantBranchDTO branch;
 

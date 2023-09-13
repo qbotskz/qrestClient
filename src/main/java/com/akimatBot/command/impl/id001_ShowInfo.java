@@ -131,7 +131,7 @@ public class id001_ShowInfo extends Command {
 
         WebAppInfo webAppInfo = new WebAppInfo();
 //        webAppInfo.setUrl("https://109.233.108.126/durger%20test/");
-        webAppInfo.setUrl("https://109.233.108.126/qtest/#/waiter");
+//        webAppInfo.setUrl("https://109.233.108.126/qtest/#/waiter");
 //        webAppInfo.setUrl("https://109.233.108.126:8000/test?chatId=" + chatId);
 
 
