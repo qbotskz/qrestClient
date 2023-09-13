@@ -5,6 +5,8 @@ import com.akimatBot.repository.repos.PropertiesRepo;
 import com.akimatBot.utils.Const;
 import com.akimatBot.utils.UpdateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -47,7 +49,6 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "6694143591:AAHfKJwcc_0D7Z6nhFEVa_oSCLtWgVJXZyg";
-//        return propertiesRepo.findById(Const.BOT_TOKEN).getValue1();
+        return propertiesRepo.findById(Const.BOT_TOKEN).getValue1();
     }
 }
