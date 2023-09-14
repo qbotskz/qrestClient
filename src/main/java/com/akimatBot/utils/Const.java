@@ -21,6 +21,7 @@ public class Const {
 
     public final static int BOT_NAME                                =    1;
     public final static int BOT_TOKEN                               =    2;
+    public static final int BOT_TOKEN_CLIENT                        =    6;
 
     public static final int COMMAND_NOT_FOUND                       =    1;
     public static final int WELCOME_TEXT_WHEN_START                 =    2;
