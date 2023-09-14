@@ -1,5 +1,6 @@
 package com.akimatBot.entity.custom;
 
+import com.akimatBot.config.AppProperties;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.utils.DateUtil;
 import com.akimatBot.web.dto.FoodDTO;
@@ -8,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.core.env.Environment;
-import org.springframework.web.context.support.StandardServletEnvironment;
 
 import javax.persistence.*;
 import java.util.*;
@@ -41,7 +40,6 @@ public class Food {
     @ManyToOne
     private FoodCategory foodCategory;
 
-//    private String photo_url;
     private Boolean activated;
 //    @Column(nullable = true)
 //    private boolean hasSpecialOffer;
@@ -76,10 +74,9 @@ public class Food {
     }
 
     public String getPhotoUrl() {
-        String ip = "https://109.233.108.126:";
-        Environment environment = new StandardServletEnvironment();
-        String propertyValue = environment.getProperty("server.port");
-        return ip + "8063" + "/api/client/photos/"  + this.getArticle() + ".jpg";
+        return "https://" + AppProperties.properties.getProperty("server.address")
+                + ":" + AppProperties.properties.getProperty("server.port")
+                + "/api/client/photos/" + this.getArticle() + ".jpg";
     }
 
     //    public Integer getFoodPrice(City city){
