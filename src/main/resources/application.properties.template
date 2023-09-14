@@ -9,6 +9,7 @@ spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=update
 
 server.port=####
+server.address=###
 
 server.ssl.enabled=true
 #server.ssl.key-alias=baeldung // ?? ?????????????????
@@ -24,3 +25,5 @@ jwt.token.expired=360000000000
 printerApiToken = testToken
 pathForSave = C:/1cTest/
 photosPath = D:/qrestTest/foods/photos/
+customPort = ###
+restoranName = ###

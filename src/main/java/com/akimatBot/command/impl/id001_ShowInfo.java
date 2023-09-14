@@ -1,6 +1,7 @@
 package com.akimatBot.command.impl;
 
 import com.akimatBot.command.Command;
+import com.akimatBot.config.AppProperties;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.enums.WaitingType;
 import com.akimatBot.entity.standart.Role;
@@ -119,26 +120,20 @@ public class id001_ShowInfo extends Command {
     }
 
     private void sendWebApp() throws TelegramApiException {
-
-//        sendMessage("<i>asdsadsad</i>");
-
         WebAppData webAppData = new WebAppData();
         webAppData.setData("asd");
 
 //        AnswerWebAppQuery answerWebAppQuery = new AnswerWebAppQuery();
 //        answerWebAppQuery.setQueryResult();
 
-
         WebAppInfo webAppInfo = new WebAppInfo();
-//        webAppInfo.setUrl("https://109.233.108.126/durger%20test/");
-//        webAppInfo.setUrl("https://109.233.108.126/qtest/#/waiter");
-//        webAppInfo.setUrl("https://109.233.108.126:8000/test?chatId=" + chatId);
-
+        webAppInfo.setUrl(
+                "https://" + AppProperties.properties.getProperty("server.address")
+                        + ":" + AppProperties.properties.getProperty("customPort"));
 
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setWebApp(webAppInfo);
-        inlineKeyboardButton.setText("Altyn Altai");
-//        inlineKeyboardButton.setText("Durger king");
+        inlineKeyboardButton.setText(AppProperties.properties.getProperty("restoranName"));
 
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
         replyKeyboardMarkup.setKeyboard(Arrays.asList(Arrays.asList(inlineKeyboardButton)));

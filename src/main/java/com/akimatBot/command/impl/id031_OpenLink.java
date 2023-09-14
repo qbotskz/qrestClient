@@ -2,6 +2,7 @@ package com.akimatBot.command.impl;
 
 
 import com.akimatBot.command.Command;
+import com.akimatBot.config.AppProperties;
 import com.akimatBot.entity.standart.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -61,7 +62,6 @@ public class id031_OpenLink extends Command {
 
 
     private void sendWebApp(long deskId, User user) throws TelegramApiException {
-
         if (user.getLinkMessageId() != null){
             deleteMessage(user.getLinkMessageId().intValue());
         }
@@ -70,11 +70,12 @@ public class id031_OpenLink extends Command {
         WebAppData webAppData = new WebAppData();
         webAppData.setData("asd");
 
-
-
         WebAppInfo webAppInfo = new WebAppInfo();
 
-        webAppInfo.setUrl("https://109.233.108.126:450?deskId=" + deskId);
+        webAppInfo.setUrl(
+                "https://" + AppProperties.properties.getProperty("server.address")
+                        + ":" + AppProperties.properties.getProperty("customPort")
+                        + "?deskId=" + deskId);
 
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setWebApp(webAppInfo);
