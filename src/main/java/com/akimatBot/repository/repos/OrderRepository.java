@@ -211,9 +211,17 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
     @Transactional
     void placeOrder(long chatId);
 
+    @Query("update FoodOrder fo set fo.orderStatus = ?2 where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
+    @Modifying
+    @Transactional
+    void setStatus(long chatId, OrderStatus orderStatus);
+
     @Query("select fo from FoodOrder fo where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
     FoodOrder getById(long chatId);
 
-    @Query("select (fo is not null ) from FoodOrder fo where fo.id = ?1 and (fo.orderStatus = 0 or fo.orderStatus = 1)")
+    @Query("select (fo is not null ) from FoodOrder fo where fo.id = ?1 and fo.waiter is not null")
     Boolean isAccept(long orderId);
+
+    @Query("select (fo is not null) from FoodOrder fo where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
+    Boolean isAcceptByChatId(long chatId);
 }
