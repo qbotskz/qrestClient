@@ -148,6 +148,7 @@ public class ClientOrderService {
                 food.setRemains(food.getRemains() - 1);
             }
             foodService.save(food);
+            orderRepository.setStatus(chatId, OrderStatus.NEW);
         } else {
             answerAddToCartDTO.setError("Food with foodId = " + foodId + " is over!");
         }
@@ -164,7 +165,12 @@ public class ClientOrderService {
 
     public void place(long chatId) {
         orderItemRepository.orderingByClient(chatId);
-        orderRepository.placeOrder(chatId);
+        Boolean isAccept = orderRepository.isAcceptByChatId(chatId);
+        if (isAccept == null || !isAccept) {
+            orderRepository.placeOrder(chatId);
+        } else {
+            orderRepository.setStatus(chatId, OrderStatus.ACTIVE);
+        }
         sendMessageToWaiters(chatId); //Отправка сообщение официанту
     }
 

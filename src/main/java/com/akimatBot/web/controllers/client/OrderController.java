@@ -148,7 +148,7 @@ public class OrderController {
         try {
             clientOrderService.place(chatId);
             return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }

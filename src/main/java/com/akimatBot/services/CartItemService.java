@@ -2,8 +2,10 @@ package com.akimatBot.services;
 
 import com.akimatBot.entity.custom.CartItem;
 import com.akimatBot.entity.custom.Food;
+import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.repository.repos.CartItemRepo;
 import com.akimatBot.repository.repos.DeskRepo;
+import com.akimatBot.repository.repos.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.List;
 @Transactional
 public class CartItemService {
     private final CartItemRepo cartItemRepo;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     FoodService foodService;
@@ -54,7 +59,7 @@ public class CartItemService {
         return cartItemRepo.save(newCartItem);
     }
 
-    private boolean addToCart(CartItem cartItem, Food food) {
+    private boolean addToCart(CartItem cartItem, Food food, Long chatId) {
         //System.out.println(food.getRemains());
         if (food.getRemains() <= 0) {
             return false;
@@ -65,6 +70,11 @@ public class CartItemService {
         this.save(cartItem);
         food.setRemains(food.getRemains() - 1);
         foodService.save(food);
+
+        if (chatId != null) {
+            System.out.println(chatId);
+            orderRepository.setStatus(chatId, OrderStatus.NEW);
+        }
         return true;
     }
 
@@ -77,7 +87,7 @@ public class CartItemService {
             cartItem = new CartItem(chatId, food, 0);
         }
 
-        return addToCart(cartItem, food);
+        return addToCart(cartItem, food, chatId);
     }
     @Transactional
     public boolean addToCartFromWaiter(long foodId, long tableId){
@@ -90,7 +100,7 @@ public class CartItemService {
             cartItem.setQuantity(1);
             cartItem.setFood(foodService.findById(foodId));
         }
-        return addToCart(cartItem, food);
+        return addToCart(cartItem, food, null);
     }
 
     @Transactional
