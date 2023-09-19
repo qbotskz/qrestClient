@@ -7,16 +7,14 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+
 @Slf4j
 public class PrecheckPrint implements WebSocketHandler {
 
+    public static final long handlerId = 2;
+    private static final int OUTPUT_BUFFER_SIZE = 1024000; // Установите желаемый размер буфера вывода
     @Value("${printerApiToken}")
     String apiToken;
-
-    public static final long handlerId = 2;
-
-    private static final int OUTPUT_BUFFER_SIZE = 1024000; // Установите желаемый размер буфера вывода
-
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -34,17 +32,16 @@ public class PrecheckPrint implements WebSocketHandler {
 //                && (WebSocketSessionManager.getSession(handlerId) == null
 //            || !WebSocketSessionManager.getSession(handlerId).isOpen())
 
-        ){
+        ) {
             WebSocketSessionManager.removeSession(handlerId);
             WebSocketSessionManager.addSession(session, handlerId);
         }
     }
 
 
-
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        log.error("Transport error: " + exception.getMessage()+ " Handler ID = " + handlerId);
+        log.error("Transport error: " + exception.getMessage() + " Handler ID = " + handlerId);
         WebSocketSessionManager.removeSession(handlerId);
         session.close();
     }

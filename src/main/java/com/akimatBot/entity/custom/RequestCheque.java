@@ -1,6 +1,5 @@
 package com.akimatBot.entity.custom;
 
-import com.akimatBot.entity.enums.CacheTypes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,13 +12,11 @@ import java.util.Date;
 public class RequestCheque {
 
 
+    @ManyToOne
+    FoodOrder foodOrder;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne
-    FoodOrder foodOrder;
-
     private Date createdDate;
 
     private boolean notified;

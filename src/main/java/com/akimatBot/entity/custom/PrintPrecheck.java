@@ -1,8 +1,6 @@
 package com.akimatBot.entity.custom;
 
 import com.akimatBot.entity.enums.Language;
-import com.akimatBot.utils.DateUtil;
-import com.akimatBot.web.dto.FoodOrderDTO;
 import com.akimatBot.web.dto.PrintPrecheckDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +32,11 @@ public class PrintPrecheck {
 
     Date cancelPrecheckDate;
 
-    public PrintPrecheckDTO getDTO(){
+    public PrintPrecheck(long id) {
+        this.id = id;
+    }
+
+    public PrintPrecheckDTO getDTO() {
         PrintPrecheckDTO printPrecheckDTO = new PrintPrecheckDTO();
         printPrecheckDTO.setId(this.getId());
         printPrecheckDTO.setPrecheckDate(this.precheckDate);
@@ -45,9 +47,5 @@ public class PrintPrecheck {
         printPrecheckDTO.setDeskNumber(this.getDeskNumber());
         printPrecheckDTO.setCancelPrecheckDate(this.cancelPrecheckDate);
         return printPrecheckDTO;
-    }
-
-    public PrintPrecheck(long id) {
-        this.id = id;
     }
 }

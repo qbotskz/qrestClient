@@ -13,16 +13,14 @@ import java.util.Date;
 public class CallWaiter {
 
 
+    @ManyToOne
+    FoodOrder foodOrder;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private Date createdDate;
 
-    @ManyToOne
-    FoodOrder foodOrder;
-
-    public CallWaiterDTO getDTO(){
+    public CallWaiterDTO getDTO() {
         CallWaiterDTO callWaiterDTO = new CallWaiterDTO();
         callWaiterDTO.setId(this.getId());
         callWaiterDTO.setCreatedDate(this.getCreatedDate());

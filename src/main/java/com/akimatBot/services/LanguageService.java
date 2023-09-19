@@ -10,21 +10,18 @@ import com.akimatBot.web.dto.AboutRestDTO;
 import org.springframework.stereotype.Component;
 
 
-
-
 @Component
 public class LanguageService {
 
-    private static UserRepository usersRepo           = TelegramBotRepositoryProvider.getUserRepository();
-    private static AboutRestaurantRepo aboutRestaurantRepo = TelegramBotRepositoryProvider.getAboutRestaurantRepo();
+    private static final UserRepository usersRepo = TelegramBotRepositoryProvider.getUserRepository();
+    private static final AboutRestaurantRepo aboutRestaurantRepo = TelegramBotRepositoryProvider.getAboutRestaurantRepo();
 
-    public  static Language getLanguage(long chatId) {
+    public static Language getLanguage(long chatId) {
 
         Language language = usersRepo.getLanguageByChatId(chatId);
-        if (language != null ){
+        if (language != null) {
             return language;
-        }
-        else {
+        } else {
             return Language.ru;
         }
     }
@@ -34,10 +31,9 @@ public class LanguageService {
         AboutRestaurant a = aboutRestaurantRepo.findById(1);
         AboutRestDTO aboutRestDTO = new AboutRestDTO();
         aboutRestDTO.setChatId(chatId);
-        if (language != null ){
+        if (language != null) {
             aboutRestDTO.setLanguage(language);
-        }
-        else {
+        } else {
             aboutRestDTO.setLanguage(Language.ru);
         }
         aboutRestDTO.setAddressru(a.getAddressru());
@@ -64,8 +60,7 @@ public class LanguageService {
     }
 
 
-
-    public  static  void        setLanguage(long chatId, Language language) {
+    public static void setLanguage(long chatId, Language language) {
         User user = usersRepo.findByChatId(chatId);
         if (user == null) {
             user = new User();

@@ -5,8 +5,6 @@ import com.akimatBot.repository.repos.PropertiesRepo;
 import com.akimatBot.utils.Const;
 import com.akimatBot.utils.UpdateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -16,8 +14,8 @@ import java.util.Map;
 @Slf4j
 public class Bot extends TelegramLongPollingBot {
 
-    private PropertiesRepo propertiesRepo = TelegramBotRepositoryProvider.getPropertiesRepo();
-    private Map<Long, Conversation> conversations = new HashMap<>();
+    private final PropertiesRepo propertiesRepo = TelegramBotRepositoryProvider.getPropertiesRepo();
+    private final Map<Long, Conversation> conversations = new HashMap<>();
 
     @Override
     public void onUpdateReceived(Update update) {

@@ -5,10 +5,8 @@ import com.akimatBot.config.Bot;
 import com.akimatBot.entity.custom.*;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.enums.OrderStatus;
-import com.akimatBot.entity.enums.SocialNetwork;
-import com.akimatBot.entity.standart.User;
 import com.akimatBot.repository.TelegramBotRepositoryProvider;
-import com.akimatBot.repository.repos.*;
+import com.akimatBot.repository.repos.OrderRepository;
 import com.akimatBot.services.LanguageService;
 import com.akimatBot.utils.Const;
 import com.akimatBot.utils.DateUtil;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -31,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 
@@ -44,17 +40,14 @@ public class OrderReportDaily {
 
     private final XSSFWorkbook workbook = new XSSFWorkbook();
     private final XSSFCellStyle style = workbook.createCellStyle();
-    private Sheet sheets;
-    private final XSSFCellStyle       hLinkStyle      = workbook.createCellStyle();
-    private final XSSFCreationHelper creationHelper  = workbook.getCreationHelper();
-
+    private final XSSFCellStyle hLinkStyle = workbook.createCellStyle();
+    private final XSSFCreationHelper creationHelper = workbook.getCreationHelper();
     List<FoodOrder> orders;
-
     @Value("${pathForSave}")
     String pathForSave;
-
     @Autowired
     OrderRepository orderRepository;
+    private Sheet sheets;
 
     public OrderReportDaily() {
         orderRepository = TelegramBotRepositoryProvider.getOrderRepository();
@@ -62,7 +55,7 @@ public class OrderReportDaily {
 
     public void sendCompReport() {
 
-            createSummary();
+        createSummary();
     }
 
     private void createSummary() {
@@ -86,12 +79,12 @@ public class OrderReportDaily {
 
         createTitle(setStyle(), rowIndex,
                 Arrays.asList(("Номер чека;Дата;Картой;Терминал;Наличные;Официант;Товар" +
-                ";Ед изм;Количество;Цена;Сумма с учетом скидки и обслуживния").split(Const.SPLIT)));
+                        ";Ед изм;Количество;Цена;Сумма с учетом скидки и обслуживния").split(Const.SPLIT)));
 //        rowIndex = 1;
 
         List<List<String>> reports = new ArrayList<>();
 
-        for (FoodOrder foodOrder : orders){
+        for (FoodOrder foodOrder : orders) {
             for (Guest guest : foodOrder.getGuests()) {
                 for (OrderItem item : guest.getOrderItems()) {
                     boolean inCash = isCash(foodOrder.getCheque().getPayments());
@@ -108,10 +101,10 @@ public class OrderReportDaily {
                     list.add(foodOrder.getWaiter().getFullName());
                     list.add(item.getFood().getFoodName(Language.ru));
                     list.add("Шт");
-                    double disc = foodOrder.getCheque().getDiscount()*item.getQuantity() * item.getPrice()/100;
-                    double serv = foodOrder.getCheque().getService()*item.getQuantity()  * item.getPrice()/100;
+                    double disc = foodOrder.getCheque().getDiscount() * item.getQuantity() * item.getPrice() / 100;
+                    double serv = foodOrder.getCheque().getService() * item.getQuantity() * item.getPrice() / 100;
                     list.add(String.valueOf(item.getQuantity()));
-                    list.add(String.valueOf((item.getQuantity() * item.getPrice() - disc + serv)/item.getQuantity()));
+                    list.add(String.valueOf((item.getQuantity() * item.getPrice() - disc + serv) / item.getQuantity()));
 //                    list.add(String.valueOf(item.getQuantity() * item.getPrice()));
 //                    list.add(String.valueOf(disc));
 //                    list.add(String.valueOf(serv));
@@ -129,8 +122,8 @@ public class OrderReportDaily {
     }
 
     private String getTotalCash(List<Payment> payments) {
-        for (Payment payment : payments){
-            if (payment.getPaymentType().getId() == 1){
+        for (Payment payment : payments) {
+            if (payment.getPaymentType().getId() == 1) {
                 return String.valueOf(payment.getAmount());
             }
         }
@@ -138,8 +131,8 @@ public class OrderReportDaily {
     }
 
     private String getNameCard(List<Payment> payments) {
-        for (Payment payment : payments){
-            if (payment.getPaymentType().getId() != 1){
+        for (Payment payment : payments) {
+            if (payment.getPaymentType().getId() != 1) {
                 return payment.getPaymentType().getName();
             }
         }
@@ -147,8 +140,8 @@ public class OrderReportDaily {
     }
 
     private String getTotalForCard(List<Payment> payments) { // костыльный метод, пришлось так делать так-как 1Сники попросили
-        for (Payment payment : payments){
-            if (payment.getPaymentType().getId() != 1){
+        for (Payment payment : payments) {
+            if (payment.getPaymentType().getId() != 1) {
                 return String.valueOf(payment.getAmount());
             }
         }
@@ -156,8 +149,8 @@ public class OrderReportDaily {
     }
 
     private boolean isCash(List<Payment> payments) { // костыльный метод, пришлось так делать так-как 1Сники попросили
-        for (Payment payment : payments){
-            if (payment.getPaymentType().getId() == 1){
+        for (Payment payment : payments) {
+            if (payment.getPaymentType().getId() == 1) {
                 return true;
             }
         }
@@ -166,7 +159,7 @@ public class OrderReportDaily {
 
     private String getPaymentsTypes(List<PaymentType> paymentTypes) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (PaymentType paymentType : paymentTypes){
+        for (PaymentType paymentType : paymentTypes) {
             stringBuilder.append(paymentType.getName()).append(";");
         }
         return stringBuilder.toString();
@@ -189,19 +182,20 @@ public class OrderReportDaily {
         }
     }
 
-    private void            insertToRowURL(int row, List<String> cellValues, CellStyle cellStyle) {
+    private void insertToRowURL(int row, List<String> cellValues, CellStyle cellStyle) {
         addCellValueLink(row, 9, cellValues.get(9), cellStyle);
         addCellValueLink(row, 12, cellValues.get(12), cellStyle);
     }
 
-    private void            addCellValueLink(int rowIndex, int cellIndex, String cellValue, CellStyle cellStyle) {
+    private void addCellValueLink(int rowIndex, int cellIndex, String cellValue, CellStyle cellStyle) {
         try {
             XSSFHyperlink link = creationHelper.createHyperlink(HyperlinkType.URL);
             link.setAddress(cellValue);
             sheets.getRow(rowIndex).getCell(cellIndex).setHyperlink(link);
             sheets.getRow(rowIndex).getCell(cellIndex).setCellStyle(cellStyle);
         } catch (Exception e) {
-            if (e.getMessage().contains("Address of hyperlink must be a valid URI")) sheets.getRow(rowIndex).getCell(cellIndex).setCellValue(" ");
+            if (e.getMessage().contains("Address of hyperlink must be a valid URI"))
+                sheets.getRow(rowIndex).getCell(cellIndex).setCellValue(" ");
         }
     }
 
@@ -216,7 +210,7 @@ public class OrderReportDaily {
 //            if ((cellIndex == 9 || cellIndex == 12) && row > 0){
 //                addCellValue(row, cellIndex++, "Скачать файл", cellStyle);
 //            }else{
-                addCellValue(row, cellIndex++, cellValue, cellStyle);
+            addCellValue(row, cellIndex++, cellValue, cellStyle);
 
 //            }
         }
@@ -299,29 +293,28 @@ public class OrderReportDaily {
     }
 
 
-    private void sendFile()  {
+    private void sendFile() {
         try {
 
 
-        String fileName = DateUtil.getDayDate(new Date()) + "(1).xlsx";
+            String fileName = DateUtil.getDayDate(new Date()) + "(1).xlsx";
 //        String.format(fileName, new Date().getTime());
-        String path = pathForSave + fileName;
-        try  {
-            File file = new File(pathForSave);
-            file.mkdir();
-            FileOutputStream stream = new FileOutputStream(path);
-            workbook.write(stream);
-            stream.close();
-        } catch (IOException e) {
-            log.error("Can't send File error: ", e);
-        }
+            String path = pathForSave + fileName;
+            try {
+                File file = new File(pathForSave);
+                file.mkdir();
+                FileOutputStream stream = new FileOutputStream(path);
+                workbook.write(stream);
+                stream.close();
+            } catch (IOException e) {
+                log.error("Can't send File error: ", e);
+            }
 
 //        FTPConnectionService ftpConnectionService = new FTPConnectionService();
 //        ftpConnectionService.connectInit();
 //        ftpConnectionService.uploadFile(fileName, new FileInputStream(path));
-        sendFile(766856789, RestoranApplication.bot, fileName, path);
-        }
-        catch (Exception e){
+            sendFile(766856789, RestoranApplication.bot, fileName, path);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -331,7 +324,7 @@ public class OrderReportDaily {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             SendDocument sendDocument = new SendDocument();
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(fileInputStream,fileName);
+            inputFile.setMedia(fileInputStream, fileName);
 
             sendDocument.setDocument(inputFile);
             sendDocument.setChatId(chatId);

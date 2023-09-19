@@ -3,7 +3,6 @@ package com.akimatBot.command.impl;
 import com.akimatBot.command.Command;
 import com.akimatBot.config.AppProperties;
 import com.akimatBot.entity.enums.Language;
-import com.akimatBot.entity.enums.WaitingType;
 import com.akimatBot.entity.standart.Role;
 import com.akimatBot.entity.standart.User;
 import com.akimatBot.repository.TelegramBotRepositoryProvider;
@@ -22,10 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class id001_ShowInfo extends Command {
-    private User user;
     private final UserRepository userRepository = TelegramBotRepositoryProvider.getUserRepository();
     private final List<Role> roles = new ArrayList<>(Collections.singletonList(new Role(2)));
-
+    private User user;
 
     // This command is executed when /start was clicked
     @Override
@@ -136,7 +134,7 @@ public class id001_ShowInfo extends Command {
         inlineKeyboardButton.setText(AppProperties.properties.getProperty("restoranName"));
 
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
-        replyKeyboardMarkup.setKeyboard(Arrays.asList(Arrays.asList(inlineKeyboardButton)));
+        replyKeyboardMarkup.setKeyboard(List.of(List.of(inlineKeyboardButton)));
 
         sendMessageWithKeyboard("Нажмите кнопку", replyKeyboardMarkup);
     }

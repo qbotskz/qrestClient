@@ -3,7 +3,6 @@ package com.akimatBot.services;
 
 import com.akimatBot.entity.custom.OrderItem;
 import com.akimatBot.repository.repos.OrderItemRepository;
-import com.akimatBot.web.dto.OrderItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ public class OrderItemService {
     private OrderItemRepository orderItemRepository;
 
 
-    public OrderItem getOne(long id){
+    public OrderItem getOne(long id) {
         return orderItemRepository.findById(id);
     }
 
@@ -28,7 +27,6 @@ public class OrderItemService {
 //
 //        return orderItemDTO;
 //    }
-
 
 
 }

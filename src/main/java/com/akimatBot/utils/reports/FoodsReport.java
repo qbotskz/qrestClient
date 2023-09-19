@@ -2,13 +2,13 @@ package com.akimatBot.utils.reports;
 
 import com.akimatBot.RestoranApplication;
 import com.akimatBot.config.Bot;
-import com.akimatBot.entity.custom.*;
-import com.akimatBot.entity.enums.Language;
+import com.akimatBot.entity.custom.Food;
+import com.akimatBot.entity.custom.Kitchen;
+import com.akimatBot.entity.custom.PaymentType;
 import com.akimatBot.repository.TelegramBotRepositoryProvider;
 import com.akimatBot.repository.repos.*;
 import com.akimatBot.services.LanguageService;
 import com.akimatBot.utils.Const;
-import com.akimatBot.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
@@ -28,21 +28,17 @@ import java.util.*;
 @Slf4j
 
 public class FoodsReport {
+    private final XSSFWorkbook workbook = new XSSFWorkbook();
+    private final XSSFCellStyle style = workbook.createCellStyle();
+    private final XSSFCellStyle hLinkStyle = workbook.createCellStyle();
+    private final XSSFCreationHelper creationHelper = workbook.getCreationHelper();
     protected MessageRepository messageRepository = TelegramBotRepositoryProvider.getMessageRepository();
     protected UserRepository userRepository = TelegramBotRepositoryProvider.getUserRepository();
     protected PropertiesRepo propertiesRepo = TelegramBotRepositoryProvider.getPropertiesRepo();
-    private PaymentTypeRepo paymentTypeRepo = TelegramBotRepositoryProvider.getPaymentTypeRepo();
-
-    private final XSSFWorkbook workbook = new XSSFWorkbook();
-    private final XSSFCellStyle style = workbook.createCellStyle();
-    private Sheet sheets;
-    private final XSSFCellStyle       hLinkStyle      = workbook.createCellStyle();
-    private final XSSFCreationHelper creationHelper  = workbook.getCreationHelper();
-
     List<Food> foods;
-
-
     FoodRepository foodRepository;
+    private final PaymentTypeRepo paymentTypeRepo = TelegramBotRepositoryProvider.getPaymentTypeRepo();
+    private Sheet sheets;
 
     public FoodsReport() {
         foodRepository = TelegramBotRepositoryProvider.getFoodRepository();
@@ -50,7 +46,7 @@ public class FoodsReport {
 
     public void sendCompReport() {
 
-            createSummary();
+        createSummary();
     }
 
     private void createSummary() {
@@ -97,7 +93,6 @@ public class FoodsReport {
         }
 
 
-
         addInfo(reports, rowIndex);
 
 
@@ -106,9 +101,9 @@ public class FoodsReport {
 
     private String getKitchensList(List<Kitchen> kitchens) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Kitchen kitchen : kitchens){
+        for (Kitchen kitchen : kitchens) {
             stringBuilder.append(kitchen.getName()).append("(").append(kitchen.getPrinterName()).append(")");
-            if (kitchen.getId() != kitchens.get(kitchens.size()-1).getId()){
+            if (kitchen.getId() != kitchens.get(kitchens.size() - 1).getId()) {
                 stringBuilder.append(",");
             }
         }
@@ -117,7 +112,7 @@ public class FoodsReport {
 
     private String getPaymentsTypes(List<PaymentType> paymentTypes) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (PaymentType paymentType : paymentTypes){
+        for (PaymentType paymentType : paymentTypes) {
             stringBuilder.append(paymentType.getName()).append(";");
         }
         return stringBuilder.toString();
@@ -140,19 +135,20 @@ public class FoodsReport {
         }
     }
 
-    private void            insertToRowURL(int row, List<String> cellValues, CellStyle cellStyle) {
+    private void insertToRowURL(int row, List<String> cellValues, CellStyle cellStyle) {
         addCellValueLink(row, 9, cellValues.get(9), cellStyle);
         addCellValueLink(row, 12, cellValues.get(12), cellStyle);
     }
 
-    private void            addCellValueLink(int rowIndex, int cellIndex, String cellValue, CellStyle cellStyle) {
+    private void addCellValueLink(int rowIndex, int cellIndex, String cellValue, CellStyle cellStyle) {
         try {
             XSSFHyperlink link = creationHelper.createHyperlink(HyperlinkType.URL);
             link.setAddress(cellValue);
             sheets.getRow(rowIndex).getCell(cellIndex).setHyperlink(link);
             sheets.getRow(rowIndex).getCell(cellIndex).setCellStyle(cellStyle);
         } catch (Exception e) {
-            if (e.getMessage().contains("Address of hyperlink must be a valid URI")) sheets.getRow(rowIndex).getCell(cellIndex).setCellValue(" ");
+            if (e.getMessage().contains("Address of hyperlink must be a valid URI"))
+                sheets.getRow(rowIndex).getCell(cellIndex).setCellValue(" ");
         }
     }
 
@@ -167,7 +163,7 @@ public class FoodsReport {
 //            if ((cellIndex == 9 || cellIndex == 12) && row > 0){
 //                addCellValue(row, cellIndex++, "Скачать файл", cellStyle);
 //            }else{
-                addCellValue(row, cellIndex++, cellValue, cellStyle);
+            addCellValue(row, cellIndex++, cellValue, cellStyle);
 
 //            }
         }
@@ -250,29 +246,28 @@ public class FoodsReport {
     }
 
 
-    private void sendFile()  {
+    private void sendFile() {
         try {
 
 
-        String fileName = "Отчет.xlsx";
+            String fileName = "Отчет.xlsx";
 //        String.format(fileName, new Date().getTime());
-        String path = "C:/1cTest/" + fileName;
-        String path2 = "C:/1cTest/";
-        try  {
-            File file = new File(path2);
-            file.mkdir();
-            FileOutputStream stream = new FileOutputStream(path);
-            workbook.write(stream);
-        } catch (IOException e) {
-            log.error("Can't send File error: ", e);
-        }
+            String path = "C:/1cTest/" + fileName;
+            String path2 = "C:/1cTest/";
+            try {
+                File file = new File(path2);
+                file.mkdir();
+                FileOutputStream stream = new FileOutputStream(path);
+                workbook.write(stream);
+            } catch (IOException e) {
+                log.error("Can't send File error: ", e);
+            }
 
-        FTPConnectionService ftpConnectionService = new FTPConnectionService();
-        ftpConnectionService.connectInit();
-        ftpConnectionService.uploadFile(fileName, new FileInputStream(path));
-        sendFile(766856789, RestoranApplication.bot, fileName, path);
-        }
-        catch (Exception e){
+            FTPConnectionService ftpConnectionService = new FTPConnectionService();
+            ftpConnectionService.connectInit();
+            ftpConnectionService.uploadFile(fileName, new FileInputStream(path));
+            sendFile(766856789, RestoranApplication.bot, fileName, path);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -282,7 +277,7 @@ public class FoodsReport {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             SendDocument sendDocument = new SendDocument();
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(fileInputStream,fileName);
+            inputFile.setMedia(fileInputStream, fileName);
 
             sendDocument.setDocument(inputFile);
             sendDocument.setChatId(chatId);

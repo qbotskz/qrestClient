@@ -6,8 +6,12 @@ import com.akimatBot.entity.enums.OrderItemStatus;
 import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.entity.enums.OrderType;
 import com.akimatBot.entity.standart.Employee;
+import com.akimatBot.entity.standart.User;
 import com.akimatBot.repository.repos.*;
-import com.akimatBot.web.dto.*;
+import com.akimatBot.web.dto.AnswerAddToCartDTO;
+import com.akimatBot.web.dto.CallWaiterDTO;
+import com.akimatBot.web.dto.FoodOrderDTO;
+import com.akimatBot.web.dto.OrderItemDeleteDTO;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -17,13 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ClientOrderService {
@@ -64,17 +67,17 @@ public class ClientOrderService {
 
 
     @Transactional
-    public FoodOrder createNewOrder(long chatId, long deskId){
+    public FoodOrder createNewOrder(long chatId, long deskId) {
 
         FoodOrder foodOrder;
-        Guest guest = userService.getCurrentGuestOfUser(chatId);
+        User user = userService.getUserByChatId(chatId);
+        Guest guest = user.getCurrentGuest();
 
         if (guest == null) {
             Desk desk = deskRepo.findById(deskId);
-            if (desk.getCurrentOrder() != null){
+            if (desk.getCurrentOrder() != null) {
                 foodOrder = desk.getCurrentOrder();
-            }
-            else {
+            } else {
                 foodOrder = new FoodOrder();
                 foodOrder.setCreatedDate(new Date());
                 foodOrder.setDesk(desk);
@@ -94,13 +97,11 @@ public class ClientOrderService {
             guest.setFoodOrder(foodOrder);
             guest.setCreatedDate(new Date());
             guest = guestRepo.save(guest);
-            userService.setGuest(guest , chatId);
+            userService.setGuest(guest, chatId);
 
-        }
-        else {
+        } else {
             return guest.getFoodOrder();
         }
-
 
         return foodOrder;
 
@@ -113,7 +114,7 @@ public class ClientOrderService {
 
     public List<FoodOrderDTO> getDoneOrdersOfClient(long chatId) {
         List<FoodOrderDTO> foodOrderDTOS = new ArrayList<>();
-        for (FoodOrder foodOrder : orderRepository.getDoneOrdersOfClient(chatId)){
+        for (FoodOrder foodOrder : orderRepository.getDoneOrdersOfClient(chatId)) {
             foodOrderDTOS.add(foodOrder.getClientFoodOrderDTO(LanguageService.getLanguage(chatId)));
         }
         return foodOrderDTOS;
@@ -123,7 +124,7 @@ public class ClientOrderService {
     public AnswerAddToCartDTO addToCart(long chatId, long foodId) {
 //        Guest guest = guestRepo.findByClientChatIdAndFoodOrderId(chatId, foodOrderId);
         Guest guest = userService.getCurrentGuestOfUser(chatId);
-        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guest.getId() , OrderItemStatus.IN_CART_CLIENT);
+        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guest.getId(), OrderItemStatus.IN_CART_CLIENT);
 
         Food food = foodService.findById(foodId);
 
@@ -178,27 +179,27 @@ public class ClientOrderService {
         FoodOrder foodOrder = orderRepository.getById(chatId);
 
         String text = "<b>Гость оформил заказ</b>" + "\n" + "\n" + "<b>Номер стола: </b>" + foodOrder.getDesk().getNumber() + "\n"
-                +"<b>Зал: </b>" +  foodOrder.getDesk().getHall().getName() + "\n" + "\n"
+                + "<b>Зал: </b>" + foodOrder.getDesk().getHall().getName() + "\n" + "\n"
                 + "Для принятия заказа, зайдите в раздел <b>\"Новые\"</b>";
 
         String encodedMessageText = URLEncoder.encode(text, StandardCharsets.UTF_8);
 
-        if (foodOrder.getWaiter()!=null){
-            if (foodOrder.getWaiter().getChatId()>0){
+        if (foodOrder.getWaiter() != null) {
+            if (foodOrder.getWaiter().getChatId() > 0) {
                 sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
-        }else{
+        } else {
             List<Employee> waiters = employeeService.getAllActiveWaiters();
-            for (Employee w: waiters){
-                if (w.getChatId()>0){
+            for (Employee w : waiters) {
+                if (w.getChatId() > 0) {
                     sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
 
-    private void sendMessage(long chatId, String encodedMessageText){
-        String url = "https://api.telegram.org/bot"  + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text="+encodedMessageText + "&parse_mode=HTML";
+    private void sendMessage(long chatId, String encodedMessageText) {
+        String url = "https://api.telegram.org/bot" + propertiesRepo.findById(2).getValue1() + "/sendMessage?chat_id=" + chatId + "&text=" + encodedMessageText + "&parse_mode=HTML";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(url);
@@ -210,52 +211,53 @@ public class ClientOrderService {
             e.printStackTrace();
         }
     }
+
     private void sendMessageToWaiters2(FoodOrder foodOrder) {
 
-        String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" +  "<b>Стол №%s вызвал Вас!</b>";
+        String callMessage = "\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1\uD83D\uDED1" + "\n\n" + "<b>Стол №%s вызвал Вас!</b>";
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 
 
-        if (foodOrder.getWaiter()!=null){
-            if (foodOrder.getWaiter().getChatId()>0){
+        if (foodOrder.getWaiter() != null) {
+            if (foodOrder.getWaiter().getChatId() > 0) {
                 sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
-        }else{
+        } else {
             List<Employee> waiters = employeeService.getAllActiveWaiters();
-            for (Employee w: waiters){
-                if (w.getChatId()>0){
+            for (Employee w : waiters) {
+                if (w.getChatId() > 0) {
                     sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
+
     private void sendMessageToWaiters3(FoodOrder foodOrder) {
 
-        String callMessage = "\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35" + "\n\n" +  "<b>Стол с №%s запрашивает Счет\uD83D\uDCB5</b>";
+        String callMessage = "\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35\uD83D\uDD35" + "\n\n" + "<b>Стол с №%s запрашивает Счет\uD83D\uDCB5</b>";
 
         String encodedMessageText = URLEncoder.encode(String.format(callMessage, foodOrder.getDesk().getNumber()), StandardCharsets.UTF_8);
 
 
-        if (foodOrder.getWaiter()!=null){
-            if (foodOrder.getWaiter().getChatId()>0){
+        if (foodOrder.getWaiter() != null) {
+            if (foodOrder.getWaiter().getChatId() > 0) {
                 sendMessage(foodOrder.getWaiter().getChatId(), encodedMessageText);
             }
-        }else{
+        } else {
             List<Employee> waiters = employeeService.getAllActiveWaiters();
-            for (Employee w: waiters){
-                if (w.getChatId()>0){
+            for (Employee w : waiters) {
+                if (w.getChatId() > 0) {
                     sendMessage(w.getChatId(), encodedMessageText);
                 }
             }
         }
     }
-
 
 
     public boolean cancelOrderItem(OrderItemDeleteDTO item) {
         OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
-        if(!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
+        if (!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
             if (orderItem1.getOrderItemStatus().equals(OrderItemStatus.IN_CART_CLIENT)) {
                 this.deleteOrderItem(orderItem1);
                 return true;
@@ -280,7 +282,7 @@ public class ClientOrderService {
     public AnswerAddToCartDTO decreaseOrderItem(long orderItemId, long chatId) {
         OrderItem orderItem = orderItemRepository.findById(orderItemId);
 
-        if (orderItem != null && orderItem.getOrderItemStatus().equals(OrderItemStatus.IN_CART_CLIENT)){
+        if (orderItem != null && orderItem.getOrderItemStatus().equals(OrderItemStatus.IN_CART_CLIENT)) {
 
             Food food = orderItem.getFood();
             if (food.getRemains() != null) {
@@ -291,10 +293,9 @@ public class ClientOrderService {
             }
             foodService.save(food);
 
-            if (orderItem.getQuantity() == 1){
+            if (orderItem.getQuantity() == 1) {
                 orderItemRepository.setDelete(orderItem);
-            }
-            else {
+            } else {
                 orderItem.minusQuantity();
                 orderItemRepository.save(orderItem);
             }
@@ -321,7 +322,7 @@ public class ClientOrderService {
         FoodOrder foodOrder = orderRepository.findById(foodOrderDTO.getId());
 
 //        Desk desk = deskRepo.findById(deskDTO.getId());
-        if (foodOrder != null){
+        if (foodOrder != null) {
             CallWaiter callWaiter = new CallWaiter();
             callWaiter.setCreatedDate(new Date());
             callWaiter.setFoodOrder(foodOrder);
@@ -333,22 +334,21 @@ public class ClientOrderService {
         return null;
     }
 
-    private void sendCalls(FoodOrder foodOrder){
+    private void sendCalls(FoodOrder foodOrder) {
         String callMessage = "Стол с номером %s вызывает официанта!";
-        if (foodOrder != null){
-            if (foodOrder.getWaiter() != null){
-                sendMessage(String.format(callMessage, foodOrder.getDesk().getNumber()),foodOrder.getDesk().getCurrentOrder().getWaiter().getChatId() );
-            }
-            else{
+        if (foodOrder != null) {
+            if (foodOrder.getWaiter() != null) {
+                sendMessage(String.format(callMessage, foodOrder.getDesk().getNumber()), foodOrder.getDesk().getCurrentOrder().getWaiter().getChatId());
+            } else {
                 List<Employee> employees = employeeService.getAllActiveWaiters();
-                for (Employee employee : employees){
-                    sendMessage(String.format(callMessage, foodOrder.getDesk().getNumber()),employee.getChatId() );
+                for (Employee employee : employees) {
+                    sendMessage(String.format(callMessage, foodOrder.getDesk().getNumber()), employee.getChatId());
                 }
             }
         }
     }
 
-    private int sendMessage(String text, Long chatId){
+    private int sendMessage(String text, Long chatId) {
         try {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(chatId);
@@ -356,7 +356,7 @@ public class ClientOrderService {
             sendMessage.setParseMode("html");
             return RestoranApplication.bot.execute(sendMessage).getMessageId();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 //            e.printStackTrace();
         }
         return 0;
@@ -366,7 +366,7 @@ public class ClientOrderService {
     public Cheque requestCheque(FoodOrderDTO foodOrderDTO) {
         String text = "Стол с номером %s запрашивает счет!";
         FoodOrder foodOrder = orderService.findById(foodOrderDTO.getId());
-        if (foodOrder != null){
+        if (foodOrder != null) {
             RequestCheque requestCheque = new RequestCheque();
             requestCheque.setCreatedDate(new Date());
             requestCheque.setFoodOrder(foodOrder);
@@ -376,10 +376,6 @@ public class ClientOrderService {
         }
         return null;
     }
-
-
-
-
 
 
     public boolean isAccept(long orderId) {

@@ -10,9 +10,7 @@ import java.util.Date;
 public class CallWaiterDTO {
 
 
-    private long id;
-
-    private Date createdDate;
-
     DeskDTO desk;
+    private long id;
+    private Date createdDate;
 }

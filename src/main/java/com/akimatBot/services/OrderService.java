@@ -60,8 +60,8 @@ public class OrderService {
     public OrderService(OrderRepository orderRepo, CartItemService cartItemService, EmployeeService employeeService,
                         OrderItemRepository orderItemRepository, DeskRepo deskRepo, FoodService foodService,
                         ChequeRepo chequeRepo, PropertiesRepo propertiesRepo, GuestRepo guestRepo, PaymentRepo paymentRepo,
-                        PaymentTypeRepo paymentTypeRepo, WaiterService waiterService,WebSocketService webSocketService,
-                        GeneralShiftService generalShiftService,PrintPrecheckRepo printPrecheckRepo,
+                        PaymentTypeRepo paymentTypeRepo, WaiterService waiterService, WebSocketService webSocketService,
+                        GeneralShiftService generalShiftService, PrintPrecheckRepo printPrecheckRepo,
                         OrderItemDeleteEntityRepo orderItemDeleteEntityRepo) {
         this.orderRepo = orderRepo;
         this.cartItemService = cartItemService;
@@ -96,7 +96,7 @@ public class OrderService {
 ////        return orderRepo.findAllByDoneFalseAndPaidTrueOrderByCreatedDateDesc();
 //    }
 
-    public List<FoodOrder> findActiveOrdersOrderByDate(){
+    public List<FoodOrder> findActiveOrdersOrderByDate() {
         return orderRepo.findAllByOrderStatusAndWaiterIsNullOrderByCreatedDate(OrderStatus.DONE);
 //        return orderRepo.findAllByDoneFalseAndWaiterIsNullOrderByCreatedDate();
     }
@@ -117,7 +117,7 @@ public class OrderService {
         User user = foodOrder.getClientByChatId(chatId);
         List<OrderItem> orderItems = new ArrayList<>();
 
-        for (CartItem cartItem: cartItems) {
+        for (CartItem cartItem : cartItems) {
             Food food = cartItem.getFood();
             OrderItem orderItem = new OrderItem();
             orderItem.setFood(food);
@@ -155,7 +155,6 @@ public class OrderService {
 //        }
 
 
-
 //        foodOrder.setTotal(totalPrice);
 
         foodOrder.setCreatedDate(new Date());
@@ -166,12 +165,10 @@ public class OrderService {
         return foodOrder;
 
 
-
-
     }
 
 
-//    @Transactional
+    //    @Transactional
 //    public FoodOrder fillOrderWithCardItemsAndSaveFromWaiter(FoodOrder foodOrder, long deskId) {
 //
 //
@@ -220,7 +217,7 @@ public class OrderService {
 //        User user = foodOrder.getClient();
         Set<OrderItem> orderItems = new HashSet<>();
 
-        for (CartItem cartItem: cartItems) {
+        for (CartItem cartItem : cartItems) {
             Food food = cartItem.getFood();
             OrderItem orderItem = new OrderItem();
             orderItem.setFood(food);
@@ -241,10 +238,6 @@ public class OrderService {
 //        totalPrice = totalPrice + (foodOrder.getDeliverNeed() ? foodOrder.getDeliveryPrice():0);
 
 
-
-
-
-
 //        foodOrder.addTotal(totalPrice);
 
 //        orders.setCreatedDate(new Date());
@@ -253,8 +246,6 @@ public class OrderService {
 //        cartItemService.clearUserCart(chatId);
 
         return foodOrder;
-
-
 
 
     }
@@ -297,7 +288,6 @@ public class OrderService {
 //
 //
 //    }
-
 
 
 //    @Transactional
@@ -343,7 +333,6 @@ public class OrderService {
 //    }
 
 
-
 //    public List<Order> findAllOrdersOfUser(String chatId) {
 //
 //        return orderRepo.getActuallyOrders(chatId, PaymTech.orderTimeout);
@@ -364,7 +353,6 @@ public class OrderService {
 ////        foodOrder.setPaid(false);
 //        this.save(foodOrder);
 //    }
-
 
 
     public List<FoodOrder> getActiveOrdersOfWaiter(long chatId) {
@@ -396,13 +384,12 @@ public class OrderService {
     public AnswerAddToCartDTO addToCart(long foodId, long guestId, Language language) {
 
         Guest guest = guestRepo.getOne(guestId);
-        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guestId ,OrderItemStatus.IN_CART);
+        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guestId, OrderItemStatus.IN_CART);
 
-        if (orderItem != null){
+        if (orderItem != null) {
             orderItem.addQuantity();
             orderItemRepository.save(orderItem);
-        }
-        else {
+        } else {
             Food food = foodService.findById(foodId);
 
             orderItem = new OrderItem();
@@ -434,11 +421,10 @@ public class OrderService {
 
         Guest guest = guestRepo.getOne(guestId);
 
-        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guestId ,OrderItemStatus.IN_CART);
-        if (orderItem != null){
+        OrderItem orderItem = orderItemRepository.findByFoodIdAndGuestIdAndOrderItemStatus(foodId, guestId, OrderItemStatus.IN_CART);
+        if (orderItem != null) {
             orderItem.addQuantity();
-        }
-        else {
+        } else {
             Food food = foodService.findById(foodId);
 
             orderItem = new OrderItem();
@@ -466,7 +452,7 @@ public class OrderService {
         Desk desk = deskRepo.findById(deskId);
 
         FoodOrder foodOrder = desk.getCurrentOrder();
-        if (foodOrder == null){
+        if (foodOrder == null) {
             foodOrder = new FoodOrder();
             foodOrder.setCreatedDate(new Date());
             foodOrder.setWaiter(employeeService.findByCode(code));
@@ -480,7 +466,6 @@ public class OrderService {
 
             foodOrder.setCheque(cheque);
         }
-
 
 
 //        foodOrder.addGuest(guest);
@@ -509,7 +494,7 @@ public class OrderService {
 
 //        FoodOrder foodOrder = getActiveOrderByDesk(deskId);
 
-        if (foodOrder == null){
+        if (foodOrder == null) {
             foodOrder = new FoodOrder();
             foodOrder.setCreatedDate(new Date());
             foodOrder.setWaiter(employeeService.findByChatId(chatId));
@@ -523,7 +508,6 @@ public class OrderService {
 
             foodOrder.setCheque(cheque);
         }
-
 
 
 //        foodOrder.addGuest(guest);
@@ -573,7 +557,7 @@ public class OrderService {
         FoodOrder foodOrder = new FoodOrder();
 //        foodOrder.setClient(user);
         foodOrder.setDeliverNeed(deliverNeed);
-        foodOrder.setOrderType(deliverNeed?OrderType.courier:OrderType.takeout);
+        foodOrder.setOrderType(deliverNeed ? OrderType.courier : OrderType.takeout);
         foodOrder.setAddress(address);
 
 
@@ -593,11 +577,11 @@ public class OrderService {
 
     @Transactional
     public Cheque editOrderItemCount(OrderItem orderItem, int count, String comment) {
-        if (count >= 0 ) {
+        if (count >= 0) {
 
             Cheque cheque = orderItem.getGuest().getFoodOrder().getCheque();
-            int price =  orderItem.getPrice();
-            int quan =  orderItem.getQuantity();
+            int price = orderItem.getPrice();
+            int quan = orderItem.getQuantity();
             int forMinus = price * (count - quan);
 
 //            cheque.addTotal(forMinus);
@@ -605,8 +589,7 @@ public class OrderService {
 
             if (count == 0) {
                 orderItemRepository.setDelete(orderItem);
-            }
-            else {
+            } else {
                 if (comment != null) {
                     orderItem.setComment(comment);
                 }
@@ -635,7 +618,7 @@ public class OrderService {
     @Transactional
     public OrderItem cut(long orderItemId, int quantity, long toGuestId) {
         OrderItem orderItem = orderItemRepository.getOne(orderItemId);
-        if (orderItem.getQuantity() >= quantity){
+        if (orderItem.getQuantity() >= quantity) {
 
 
             FoodOrder oldOrder = orderItem.getGuest().getFoodOrder();
@@ -660,7 +643,7 @@ public class OrderService {
     @Transactional
     public DeskDTO cut(long orderItemId, int quantity, long toGuestId, long chatId) {
         OrderItem orderItem = orderItemRepository.getOne(orderItemId);
-        if (orderItem.getQuantity() >= quantity){
+        if (orderItem.getQuantity() >= quantity) {
 
 
             FoodOrder oldOrder = orderItem.getGuest().getFoodOrder();
@@ -683,14 +666,14 @@ public class OrderService {
 
             return oldOrder.getDesk().getDeskDTOFull(Language.ru);
 
-        }
-        else return null;
+        } else return null;
     }
 
     public boolean hasNotDoneOfWaiter(long code) {
 //        return orderRepo.existsByWaiterChatIdAndDoneIsFalse(chatId);
         return orderRepo.countActiveOrdersByCode(code) == 0;
     }
+
     public boolean hasNotDoneOfWaiterByChatId(long chatId) {
 //        return orderRepo.existsByWaiterChatIdAndDoneIsFalse(chatId);
         return orderRepo.countActiveOrdersByChatId(chatId) == 0;
@@ -789,8 +772,7 @@ public class OrderService {
     }
 
     @Transactional
-    public boolean cookOrder(long orderId)
-    {
+    public boolean cookOrder(long orderId) {
         Boolean isAv = orderItemRepository.isAvailableRemains(orderId);
         if (isAv == null || isAv) {
             webSocketService.sendToPrinter(orderId);
@@ -807,42 +789,42 @@ public class OrderService {
         Guest guest = guestRepo.getOne(guestDTO.getId());
         Desk currentDesk = guest.getFoodOrder().getDesk();
         FoodOrder currentOrder = guest.getFoodOrder();
-        if (guestRepo.getOrderItemsSize(guestDTO.getId()) == 0){
+        if (guestRepo.getOrderItemsSize(guestDTO.getId()) == 0) {
             guestRepo.delete(guest.getId());
-            if (currentOrder.getGuestsSize() == 0){
+            if (currentOrder.getGuestsSize() == 0) {
                 currentDesk.setCurrentOrder(null);
                 deskRepo.save(currentDesk);
                 delete(currentOrder);
             }
-            return  true;
-        }
-        else return false;
+            return true;
+        } else return false;
     }
 
     @Transactional
     public Cheque editDiscount(long chequeId, double discount) throws Exception {
-        if (discount >=0 && discount <= 100) {
+        if (discount >= 0 && discount <= 100) {
             Cheque cheque = chequeRepo.findById(chequeId);
             cheque.setDiscount(discount);
             return chequeRepo.save(cheque);
-        }
-        else throw new Exception();
+        } else throw new Exception();
 
     }
+
     @Transactional
     public Cheque editService(long chequeId, double service) throws Exception {
-        if (service >=0 && service <= 100) {
+        if (service >= 0 && service <= 100) {
             Cheque cheque = chequeRepo.findById(chequeId);
             cheque.setService(service);
             return chequeRepo.save(cheque);
         }
         throw new Exception();
     }
+
     @Transactional
-    public Cheque editPrepayment(long chequeId, PaymentDTO prepayment){
+    public Cheque editPrepayment(long chequeId, PaymentDTO prepayment) {
 
         Cheque cheque = chequeRepo.findById(chequeId);
-        if (cheque != null && cheque.getPrepayment() != null){
+        if (cheque != null && cheque.getPrepayment() != null) {
             cheque.deletePrepayment();
         }
         Payment prePayment = new Payment();
@@ -866,9 +848,9 @@ public class OrderService {
         //проверить что стол не тот который уже стоит
         //проверить что стол существуетdone
         //проверить что ордер сущесвует
-        if(deskRepo.existsAndFree(toDeskId)){
+        if (deskRepo.existsAndFree(toDeskId)) {
             deskRepo.setCurrentOrderNull(orderRepo.getDeskIdOfOrder(orderId));
-            deskRepo.setCurrentOrder(orderId ,toDeskId);
+            deskRepo.setCurrentOrder(orderId, toDeskId);
             orderRepo.changeDesk(orderId, toDeskId);
             return true;
         }
@@ -878,7 +860,7 @@ public class OrderService {
     @Transactional
     public boolean changeWaiter(long orderId, long toWaiterId) {
         //проверить что у официанта открыта смена
-        if (waiterService.isOpenShiftById(toWaiterId)){
+        if (waiterService.isOpenShiftById(toWaiterId)) {
             orderRepo.changeWaiter(orderId, toWaiterId);
             return true;
         }
@@ -888,9 +870,11 @@ public class OrderService {
     public boolean hisOrder(Long code, long orderId) {
         return orderRepo.hisOrder(code, orderId);
     }
+
     public boolean hisOrderByChatId(Long chatId, long orderId) {
         return orderRepo.hisOrderByChatId(chatId, orderId);
     }
+
     public boolean hisOrderByChequeId(Long code, long chequeId) {
         return orderRepo.hisOrderByChequeId(code, chequeId);
     }
@@ -912,6 +896,7 @@ public class OrderService {
         return orderRepo.hisOrderByOrderItemId(code, orderItemId);
 
     }
+
     public boolean hisOrderByOrderItemIdAndChatId(Long chatId, long orderItemId) {
         return orderRepo.hisOrderByOrderItemIdAndChatId(chatId, orderItemId);
 
@@ -919,7 +904,7 @@ public class OrderService {
 
     public boolean cancelOrderItem(OrderItemDeleteDTO item) {
         OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
-        if(!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
+        if (!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
             if (orderItem1.getOrderItemStatus().equals(OrderItemStatus.IN_CART)) {
                 this.deleteOrderItem(orderItem1);
                 return true;
@@ -935,9 +920,10 @@ public class OrderService {
         return false;
 
     }
+
     public boolean deleteOrderItemMobile(OrderItemDeleteDTO item) {
         OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
-        if(!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED) && item.getReason() != null) {
+        if (!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED) && item.getReason() != null) {
             webSocketService.printCancelOrderItem(item, orderItem1);
             deleteOrderItem(orderItem1);
             return true;
@@ -945,9 +931,10 @@ public class OrderService {
         return false;
 
     }
+
     public boolean cancelOrderItemMobile(OrderItemDeleteDTO item) { //in cart
         OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
-        if(!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
+        if (!orderItem1.getOrderItemStatus().equals(OrderItemStatus.DELETED)) {
             if (orderItem1.getOrderItemStatus().equals(OrderItemStatus.IN_CART)) {
                 this.deleteOrderItem(orderItem1);
                 return true;
@@ -966,6 +953,7 @@ public class OrderService {
         reportDailyDTO.setOrderQuantity(orderRepo.getQuantityBetween(generalShift.getOpeningTime(), new Date()));
         return reportDailyDTO;
     }
+
     public ReportDailyWithTaxDTO getReportDailyWithTaxDTO(long code) {
         ReportDailyWithTaxDTO reportDailyWithTaxDTO = new ReportDailyWithTaxDTO();
         GeneralShift generalShift = generalShiftService.getOpenedShift();
@@ -981,7 +969,7 @@ public class OrderService {
     private List<PaymentTypeReportDTO> getDTO(List<PaymentTypeReport> totalForPaymentTypesJPQL) {
 
         List<PaymentTypeReportDTO> dtos = new ArrayList<>();
-        for (PaymentTypeReport paymentTypeReport : totalForPaymentTypesJPQL){
+        for (PaymentTypeReport paymentTypeReport : totalForPaymentTypesJPQL) {
             dtos.add(paymentTypeReport.getDTO());
         }
 
@@ -1001,7 +989,7 @@ public class OrderService {
 
     private List<OrderItemDeleteDTO> getItemsDTOS(List<OrderItemDeleteEntity> orderItemDeleteEntities) {
         List<OrderItemDeleteDTO> dtos = new ArrayList<>();
-        for (OrderItemDeleteEntity entity : orderItemDeleteEntities){
+        for (OrderItemDeleteEntity entity : orderItemDeleteEntities) {
             dtos.add(entity.getDTO());
         }
         return dtos;
@@ -1009,7 +997,7 @@ public class OrderService {
 
     private List<PrintPrecheckDTO> getPrechecksDTO(List<PrintPrecheck> prechecks) {
         List<PrintPrecheckDTO> dtos = new ArrayList<>();
-        for (PrintPrecheck printPrecheck :prechecks ){
+        for (PrintPrecheck printPrecheck : prechecks) {
             dtos.add(printPrecheck.getDTO());
         }
         return dtos;
@@ -1043,27 +1031,7 @@ public class OrderService {
 //    }
 
 
-
-
-
-
-
-
-
-
-
-
 //////////////////////////////////////////  (☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)   /////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
 
 
 }

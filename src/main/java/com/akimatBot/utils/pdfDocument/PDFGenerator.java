@@ -1,6 +1,5 @@
 package com.akimatBot.utils.pdfDocument;
 
-import com.akimatBot.entity.custom.PDFFilesToPrint;
 import com.akimatBot.repository.repos.PDFFilesToPrintRepo;
 import com.akimatBot.repository.repos.PropertiesRepo;
 import com.akimatBot.services.OrderService;
@@ -12,16 +11,13 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,17 +25,15 @@ import java.util.List;
 @Service
 public class PDFGenerator {
 
+    private final String path = "D:/qrestoran/printerDocuments/";
     @Autowired
     OrderService orderService;
-
     @Autowired
     PropertiesRepo propertiesRepo;
-
     @Autowired
     PDFFilesToPrintRepo pdfFilesToPrintRepo;
-    private final String path = "D:/qrestoran/printerDocuments/";
 
-    public  File getReportDaily(ReportDailyWithTaxDTO reportDaily) {
+    public File getReportDaily(ReportDailyWithTaxDTO reportDaily) {
         try {
             String printerName = propertiesRepo.findFirstById(5).getValue1();
             int y = 0;
@@ -64,7 +58,7 @@ public class PDFGenerator {
 
             // Начинаем запись текста на страницу
             contentStream.beginText();
-            contentStream.newLineAtOffset(x, height - 20 ); // Начальная позиция текста (10 мм, 180 мм)
+            contentStream.newLineAtOffset(x, height - 20); // Начальная позиция текста (10 мм, 180 мм)
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,27 +72,26 @@ public class PDFGenerator {
 
 
 //            addText(document, contentStream,10 , 0, 10 ,"ИП “Мустафаали”", 10);
-            addText(document, contentStream,10 , 0, 10 ,"ИП “Мұстафаәли”", 10);
+            addText(document, contentStream, 10, 0, 10, "ИП “Мұстафаәли”", 10);
 
-            addText(document, contentStream,10 , 0, 10 ,"ИНН ", 10);
+            addText(document, contentStream, 10, 0, 10, "ИНН ", 10);
 
-            addText(document, contentStream,10 , x, 10 ,"----------------------------------------------", 30);
+            addText(document, contentStream, 10, x, 10, "----------------------------------------------", 30);
 //            addText(document, contentStream,10 , x, 10 ," ", 20);
-            addText(document, contentStream,10 , x, 10 ," 041 Выручка по типам с налогами ", 30);
-            addText(document, contentStream,10 , x, 10 ,"Терминал: №1(Алтын Алтай Рыскулова)", 10);
-            addText(document, contentStream,10 , x, 10 ,"Смена открыта: " + reportDaily.getGeneralShift().getOpeningTime(), 10);
-            addText(document, contentStream,10 , x, 10 ,"Кассовая смена: " + reportDaily.getGeneralShift().getId(), 10);
-            addText(document, contentStream,10 , x, 10 ,"Текущее время: " + DateUtil.getDbMmYyyyHhMmSs(new Date()), 10);
-            addText(document, contentStream,10 , x, 10 ,"Текущий пользователь: " + reportDaily.getCurrentEmployee().getFullName(), 25);
-            addText(document, contentStream,10 , x, 10 ,"Фискальные типы оплат:", 10);
-            addText(document, contentStream,10 , x, 10 ,"----------------------------------------------", 10);
-            addText(document, contentStream,10 , x, 10 ,"Тип оплаты        Заказов    Сумма", 10);
-            for (String row : getRows(reportDaily.getPaymentTypeReports())){
-                addText(document, contentStream,10 , x, 10 ,row, 10);
+            addText(document, contentStream, 10, x, 10, " 041 Выручка по типам с налогами ", 30);
+            addText(document, contentStream, 10, x, 10, "Терминал: №1(Алтын Алтай Рыскулова)", 10);
+            addText(document, contentStream, 10, x, 10, "Смена открыта: " + reportDaily.getGeneralShift().getOpeningTime(), 10);
+            addText(document, contentStream, 10, x, 10, "Кассовая смена: " + reportDaily.getGeneralShift().getId(), 10);
+            addText(document, contentStream, 10, x, 10, "Текущее время: " + DateUtil.getDbMmYyyyHhMmSs(new Date()), 10);
+            addText(document, contentStream, 10, x, 10, "Текущий пользователь: " + reportDaily.getCurrentEmployee().getFullName(), 25);
+            addText(document, contentStream, 10, x, 10, "Фискальные типы оплат:", 10);
+            addText(document, contentStream, 10, x, 10, "----------------------------------------------", 10);
+            addText(document, contentStream, 10, x, 10, "Тип оплаты        Заказов    Сумма", 10);
+            for (String row : getRows(reportDaily.getPaymentTypeReports())) {
+                addText(document, contentStream, 10, x, 10, row, 10);
             }
-            addText(document, contentStream,10 , x, 10 ,"----------------------------------------------", 10);
-            addText(document, contentStream,10 , x, 10 ,getTotal(reportDaily.getTotal()), 10);
-
+            addText(document, contentStream, 10, x, 10, "----------------------------------------------", 10);
+            addText(document, contentStream, 10, x, 10, getTotal(reportDaily.getTotal()), 10);
 
 
             // Завершаем запись текста
@@ -108,7 +101,7 @@ public class PDFGenerator {
             contentStream.close();
 
             // Сохраняем документ на диск
-            String fileName =  new Date().getTime() + "(" +printerName +")" + ".pdf";
+            String fileName = new Date().getTime() + "(" + printerName + ")" + ".pdf";
             String absoluteFileName = path + fileName;
 
             document.save(absoluteFileName);
@@ -134,7 +127,7 @@ public class PDFGenerator {
         String tot = decimalFormat.format(total);
 
         int chars = rowSize - tot.length();
-        while (str.length() <= chars){
+        while (str.length() <= chars) {
             str += " ";
         }
         str += tot;
@@ -143,7 +136,7 @@ public class PDFGenerator {
 
     private List<String> getRows(List<PaymentTypeReportDTO> paymentTypeReports) {
         List<String> rows = new ArrayList<>();
-        for (PaymentTypeReportDTO paymentTypeReportDTO : paymentTypeReports){
+        for (PaymentTypeReportDTO paymentTypeReportDTO : paymentTypeReports) {
             rows.addAll(getRow(paymentTypeReportDTO));
         }
         return rows;
@@ -153,18 +146,17 @@ public class PDFGenerator {
         int countChars = 33;
         int charsForName = countChars - 4 - String.valueOf(paymentTypeReportDTO.getTotal()).length() - String.valueOf(paymentTypeReportDTO.getQuantity()).length();
         List<String> row = new ArrayList<>();
-        String name  = "";
-        for (int i = 0; i <= paymentTypeReportDTO.getPaymentType().getName().length() ; i++) {
-            if (name.length() == paymentTypeReportDTO.getPaymentType().getName().length()){
-                if (name.length() < charsForName){
-                    while (name.length() != charsForName){
+        String name = "";
+        for (int i = 0; i <= paymentTypeReportDTO.getPaymentType().getName().length(); i++) {
+            if (name.length() == paymentTypeReportDTO.getPaymentType().getName().length()) {
+                if (name.length() < charsForName) {
+                    while (name.length() != charsForName) {
                         name += " ";
                     }
                 }
                 name = name + " " + paymentTypeReportDTO.getQuantity() + "    " + paymentTypeReportDTO.getTotal();
                 row.add(name);
-            }
-            else {
+            } else {
                 name += paymentTypeReportDTO.getPaymentType().getName().charAt(i);
                 if (name.length() == charsForName) {
                     row.add(name);
@@ -176,11 +168,11 @@ public class PDFGenerator {
 
     private float calculateHeight(ReportDailyWithTaxDTO reportDaily) {
         float h = 240;
-        h += 20*reportDaily.getPaymentTypeReports().size();
+        h += 20 * reportDaily.getPaymentTypeReports().size();
         return h;
     }
 
-    private void addText(PDDocument document, PDPageContentStream contentStream, int fontSize, int x, int y, String text, float  leading) throws IOException {
+    private void addText(PDDocument document, PDPageContentStream contentStream, int fontSize, int x, int y, String text, float leading) throws IOException {
         File fontFile = new File("src/main/resources/templates/fonts/VCOURN.TTF");
         PDType0Font customFont = PDType0Font.load(document, fontFile);
 

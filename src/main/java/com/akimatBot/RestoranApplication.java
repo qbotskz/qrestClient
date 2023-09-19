@@ -1,26 +1,17 @@
 package com.akimatBot;
 
 import com.akimatBot.config.Bot;
-import com.akimatBot.utils.reports.FTPConnectionService;
 import com.akimatBot.utils.timerTasks.SendDailyReport;
 import com.akimatBot.web.websocets.timerTasks.CheckCancelOrderItem;
 import com.akimatBot.web.websocets.timerTasks.CheckPrintKitchen;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.telegram.telegrambots.ApiContextInitializer;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-
-import java.util.Calendar;
-import java.util.Timer;
 
 @SpringBootApplication
 //@EnableJpaRepositories
@@ -28,12 +19,9 @@ import java.util.Timer;
 @Slf4j
 public class RestoranApplication implements CommandLineRunner {
 
-    public static void main(String[] args) {
-        SpringApplication.run(RestoranApplication.class, args);
-    }
-
     public static Bot bot;
-
+    @Value("${server.port}")
+    static String port;
     @Autowired
     CheckPrintKitchen checkPrintKitchen;
     @Autowired
@@ -42,8 +30,13 @@ public class RestoranApplication implements CommandLineRunner {
     @Autowired
     SendDailyReport sendDailyReport;
 
-    @Value("${server.port}")
-    static String port;
+    public static void main(String[] args) {
+        SpringApplication.run(RestoranApplication.class, args);
+    }
+
+    public static String getPort() {
+        return port;
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -54,7 +47,7 @@ public class RestoranApplication implements CommandLineRunner {
 //        ApiContextInitializer.init();
         log.info("ApiContextInitializer.InitNormal()");
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        bot = new       Bot();
+        bot = new Bot();
 
         try {
             telegramBotsApi.registerBot(bot);
@@ -62,7 +55,6 @@ public class RestoranApplication implements CommandLineRunner {
         } catch (Exception e) {
             log.error("Error in main class", e);
         }
-
 
 
 //        OrderReportDaily orderReportDaily = new OrderReportDaily();
@@ -85,10 +77,6 @@ public class RestoranApplication implements CommandLineRunner {
 //        calendar.set(Calendar.MINUTE, 59);
 //        calendar.set(Calendar.SECOND, 59);
 //        timerDailyReport.scheduleAtFixedRate(sendDailyReport, calendar.getTime(), 1000*60*60*24);
-    }
-
-    public static String getPort(){
-        return port;
     }
 
 

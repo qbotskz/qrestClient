@@ -36,20 +36,22 @@ public class CartItemService {
     public List<CartItem> findAllCartItemsOfUser(long chatId) {
         return cartItemRepo.findAllByClientChatIdOrderById(chatId);
     }
+
     public List<CartItem> findAllCartItemsOfTable(long tableId) {
         return cartItemRepo.findAllByDeskIdOrderById(tableId);
     }
 
-    public CartItem findByBookAndTable(long foodId, long tableId){
+    public CartItem findByBookAndTable(long foodId, long tableId) {
 
         return cartItemRepo.findByFoodIdAndDeskId(foodId, tableId);
     }
-    public CartItem findByBookAndChatId(Food food, long chatId){
+
+    public CartItem findByBookAndChatId(Food food, long chatId) {
 
         return cartItemRepo.findByFoodAndClientChatId(food, chatId);
     }
 
-    public CartItem findByIdAndChatId(long id, long chatId){
+    public CartItem findByIdAndChatId(long id, long chatId) {
         return cartItemRepo.findByIdAndClientChatId(id, chatId);
     }
 
@@ -79,7 +81,7 @@ public class CartItemService {
     }
 
     @Transactional
-    public boolean addToCart(Long foodId, long chatId){
+    public boolean addToCart(Long foodId, long chatId) {
         Food food = foodService.findById(foodId);
         CartItem cartItem = this.findByBookAndChatId(food, chatId);
 
@@ -89,12 +91,13 @@ public class CartItemService {
 
         return addToCart(cartItem, food, chatId);
     }
+
     @Transactional
-    public boolean addToCartFromWaiter(long foodId, long tableId){
+    public boolean addToCartFromWaiter(long foodId, long tableId) {
         Food food = foodService.findById(foodId);
         CartItem cartItem = this.findByBookAndTable(foodId, tableId);
 
-        if (cartItem == null){
+        if (cartItem == null) {
             cartItem = new CartItem();
             cartItem.setDesk(deskRepo.getOne(tableId));
             cartItem.setQuantity(1);
@@ -104,7 +107,7 @@ public class CartItemService {
     }
 
     @Transactional
-    public boolean decreaseCartItemQuantity(long bookId, long chatId){
+    public boolean decreaseCartItemQuantity(long bookId, long chatId) {
 
         try {
             CartItem cartItem;
@@ -122,12 +125,11 @@ public class CartItemService {
             }
 
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
 
     @Transactional
@@ -139,6 +141,7 @@ public class CartItemService {
     public void clearUserCart(long chatId) {
         cartItemRepo.deleteCartItemsByClientChatId(chatId);
     }
+
     @Transactional
     public void clearDeskCart(long deskId) {
         cartItemRepo.deleteCartItemsByDeskId(deskId);

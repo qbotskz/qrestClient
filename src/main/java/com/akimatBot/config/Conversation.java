@@ -1,19 +1,19 @@
 package com.akimatBot.config;
 
 import com.akimatBot.command.Command;
-
 import com.akimatBot.entity.custom.Food;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.standart.User;
 import com.akimatBot.exceptions.CommandNotFoundException;
 import com.akimatBot.repository.TelegramBotRepositoryProvider;
-import com.akimatBot.repository.repos.*;
+import com.akimatBot.repository.repos.FoodRepository;
+import com.akimatBot.repository.repos.KeyboardMarkUpRepository;
+import com.akimatBot.repository.repos.MessageRepository;
 import com.akimatBot.services.CommandService;
 import com.akimatBot.services.KeyboardMarkUpService;
 import com.akimatBot.services.LanguageService;
 import com.akimatBot.utils.BotUtil;
 import com.akimatBot.utils.DateUtil;
-import com.akimatBot.utils.SetDeleteMessages;
 import com.akimatBot.utils.UpdateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -21,9 +21,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,22 +30,26 @@ import java.util.List;
 @Slf4j
 public class Conversation {
 
+    private static long currentChatId;
     private long chatId;
     //    private DaoFactory factory         = DaoFactory.getInstance();
 //    private MessageDao messageDao;
-    private FoodRepository foodRepository = TelegramBotRepositoryProvider.getFoodRepository();
+    private final FoodRepository foodRepository = TelegramBotRepositoryProvider.getFoodRepository();
     private List<Food> foods;
-    private MessageRepository messageRepository = TelegramBotRepositoryProvider.getMessageRepository();
-    private KeyboardMarkUpRepository keyboardMarkUpRepository = TelegramBotRepositoryProvider.getKeyboardMarkUpRepository();
-    private static long currentChatId;
+    private final MessageRepository messageRepository = TelegramBotRepositoryProvider.getMessageRepository();
+    private final KeyboardMarkUpRepository keyboardMarkUpRepository = TelegramBotRepositoryProvider.getKeyboardMarkUpRepository();
     private Command command;
     private BotUtil botUtil;
-    private CommandService commandService = new CommandService();
-    private KeyboardMarkUpService keyboardMarkUpService = new KeyboardMarkUpService();
+    private final CommandService commandService = new CommandService();
+    private final KeyboardMarkUpService keyboardMarkUpService = new KeyboardMarkUpService();
 //    private AppealTaskRequestToRenewalDao appealTaskRequestToRenewalDao = new AppealTaskRequestToRenewalDao();
 //    private AppealTaskDao appealTaskDao = new AppealTaskDao();
 
-    public String getStrikedText(Integer price){
+    public static long getCurrentChatId() {
+        return currentChatId;
+    }
+
+    public String getStrikedText(Integer price) {
         //int price = Integer.parseInt(stringPrice);
         String s = "";
         int a = 0;
@@ -55,38 +57,29 @@ public class Conversation {
 
             a = price % 10;
             price = price / 10;
-            if(a == 0){
-                s+="0̶";
-            }
-            else if(a==1){
-                s+="1̶";
-            }
-            else if(a==2){
-                s+="2̶";
-            }
-            else if(a==3){
-                s+="3̶";
-            }
-            else if(a==4){
-                s+="4̶";
-            }
-            else if(a==5){
-                s+="5̶";
-            }
-            else if(a==6){
-                s+="6̶";
-            }
-            else if(a==7){
-                s+="7̶";
-            }
-            else if(a==8){
-                s+="8̶";
-            }
-            else if(a==9){
-                s+="9̶";
+            if (a == 0) {
+                s += "0̶";
+            } else if (a == 1) {
+                s += "1̶";
+            } else if (a == 2) {
+                s += "2̶";
+            } else if (a == 3) {
+                s += "3̶";
+            } else if (a == 4) {
+                s += "4̶";
+            } else if (a == 5) {
+                s += "5̶";
+            } else if (a == 6) {
+                s += "6̶";
+            } else if (a == 7) {
+                s += "7̶";
+            } else if (a == 8) {
+                s += "8̶";
+            } else if (a == 9) {
+                s += "9̶";
             }
         }
-       return  new StringBuilder(s).reverse().toString();
+        return new StringBuilder(s).reverse().toString();
 
     }
 
@@ -97,7 +90,7 @@ public class Conversation {
             String commandId = "";
             String price;
             User user = TelegramBotRepositoryProvider.getUserRepository().findByChatId(chatId);
-            
+
 //            if (query.equals("set")) {
 //                foods = foodRepository.findFoodsByFoodSubCategory(TelegramBotRepositoryProvider.getFoodSubCategoryRepo().findFoodSubCategoryEntityById(17));
 //                commandId = "46,";
@@ -159,7 +152,6 @@ public class Conversation {
 //            ans.setSwitchPmParameter("0");
 //            ans.setSwitchPmText("HELLLLOOOO");
             bot.execute(ans);
-
 
 
             return;
@@ -302,10 +294,6 @@ public class Conversation {
                 clear();
             }
         }
-    }
-
-    public static long getCurrentChatId() {
-        return currentChatId;
     }
 
     private void checkLanguage(long chatId) {

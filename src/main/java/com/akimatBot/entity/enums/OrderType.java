@@ -12,6 +12,6 @@ public enum OrderType {
 
     takeout,
     courier,
-    in_the_restaurant;
+    in_the_restaurant
 
 }
