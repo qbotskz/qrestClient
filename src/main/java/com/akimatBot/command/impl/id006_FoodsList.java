@@ -7,13 +7,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class id006_FoodsList extends Command {
 
     @Override
-    public boolean  execute() throws TelegramApiException {
+    public boolean execute() throws TelegramApiException {
         try {
 
             FoodsReport foodsReport = new FoodsReport();
             foodsReport.sendCompReport();
             sendMessage("Отправлено!");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             sendMessage("Произошла не приведенная ошибка!");
         }

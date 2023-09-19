@@ -16,17 +16,17 @@ public enum PaymentMethod {
     private String nameRu;
     private String nameKz;
 
-    public String getName(int langId) {
-        if(langId==1){
-            return nameRu;
-        }
-        return nameKz;
-    }
-
     public static PaymentMethod getById(int id) {
         for (PaymentMethod paymentMethod : values()) {
             if (paymentMethod.id == (id)) return paymentMethod;
         }
         return DEFAULT;
+    }
+
+    public String getName(int langId) {
+        if (langId == 1) {
+            return nameRu;
+        }
+        return nameKz;
     }
 }

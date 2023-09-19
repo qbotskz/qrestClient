@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -21,9 +19,9 @@ public class UserDTO {
 
 //    private String code;
 
-    private String      fullName;
+    private String fullName;
 
-    private String      phone;
+    private String phone;
 
     private Long chatId;
 

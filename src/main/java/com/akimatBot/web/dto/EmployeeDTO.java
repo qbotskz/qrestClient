@@ -11,20 +11,15 @@ import java.util.List;
 @Setter
 public class EmployeeDTO {
 
-    private long     id;
-
-    private long        chatId;
-    private String      phone;
-    private String      fullName;
-    private String      position;
-    private Long      code;
-
     Language language;
-
-
-    private WaiterShiftDTO currentShift;
-
     List<RoleDTO> roles;
+    private long id;
+    private long chatId;
+    private String phone;
+    private String fullName;
+    private String position;
+    private Long code;
+    private WaiterShiftDTO currentShift;
     private RestaurantBranchDTO restaurantBranch;
 
 }

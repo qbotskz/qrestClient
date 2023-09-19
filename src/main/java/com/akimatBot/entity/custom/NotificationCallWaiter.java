@@ -1,6 +1,5 @@
 package com.akimatBot.entity.custom;
 
-import com.akimatBot.entity.enums.CacheTypes;
 import com.akimatBot.entity.standart.Employee;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,15 +13,12 @@ import java.util.Date;
 public class NotificationCallWaiter {
 
 
+    @ManyToOne
+    CallWaiter callWaiter;
+    @ManyToOne
+    Employee employ;
+    Date createdDate;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne
-    CallWaiter callWaiter;
-
-    @ManyToOne
-    Employee employ;
-
-    Date createdDate;
 }

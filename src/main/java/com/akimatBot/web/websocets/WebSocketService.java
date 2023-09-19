@@ -4,27 +4,19 @@ import com.akimatBot.entity.custom.FoodOrder;
 import com.akimatBot.entity.custom.OrderItem;
 import com.akimatBot.entity.custom.PrintPayment;
 import com.akimatBot.entity.custom.PrintPrecheck;
-import com.akimatBot.entity.enums.Language;
 import com.akimatBot.repository.repos.*;
 import com.akimatBot.utils.DateUtil;
-import com.akimatBot.web.dto.OrderItemDTO;
 import com.akimatBot.web.dto.OrderItemDeleteDTO;
-import com.akimatBot.web.dto.PrintKitchenDTO;
-import com.akimatBot.web.dto.PrintPrecheckDTO;
+import com.akimatBot.web.websocets.entities.KitchenPrintEntityRepo;
 import com.akimatBot.web.websocets.entities.OrderItemDeleteEntity;
 import com.akimatBot.web.websocets.entities.OrderItemDeleteEntityRepo;
 import com.akimatBot.web.websocets.entities.PrintKitchenEntity;
-import com.akimatBot.web.websocets.entities.KitchenPrintEntityRepo;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -88,11 +80,11 @@ public class WebSocketService {
             printPrecheck.setHallName(foodOrder.getDesk().getHall().getName());
             printPrecheck.setDeskNumber(foodOrder.getDesk().getNumber());
             printPrecheckRepo.save(printPrecheck);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     public void printPayment(long orderId) {
         try {
             FoodOrder foodOrder = orderRepository.findOrderById(orderId);
@@ -105,8 +97,7 @@ public class WebSocketService {
             printPayment.setHallName(foodOrder.getDesk().getHall().getName());
             printPayment.setDeskNumber(foodOrder.getDesk().getNumber());
             printPaymentRepo.save(printPayment);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -125,8 +116,7 @@ public class WebSocketService {
             orderItemDeleteEntity.setDate(new Date());
             orderItemDeleteEntityRepo.save(orderItemDeleteEntity);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

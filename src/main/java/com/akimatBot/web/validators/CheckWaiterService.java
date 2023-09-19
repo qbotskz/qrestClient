@@ -10,28 +10,25 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Component(value="checkWaiterService")
+@Component(value = "checkWaiterService")
 public class CheckWaiterService
 //public class PermissionEvaluatorImpl implements PermissionEvaluator
 {
-    public CheckWaiterService() {}
-
     @Autowired
     public WaiterShiftService waiterShiftService;
-
     @Autowired
     GuestRepo guestRepo;
-
     @Autowired
     EmployeeService employeeService;
-
     @Autowired
     OrderItemRepository orderItemRepository;
-
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    public boolean isOpenShift(long code){
+    public CheckWaiterService() {
+    }
+
+    public boolean isOpenShift(long code) {
         code = Long.parseLong(httpServletRequest.getHeader("code"));
         System.out.println("Code => " + code);
         return waiterShiftService.hasOpenedShift(Long.parseLong(httpServletRequest.getHeader("code")));
@@ -52,6 +49,7 @@ public class CheckWaiterService
     public boolean isPrecheckOrder(long guestId) {
         return guestRepo.getOrderStatusOfGuest(guestId) == OrderStatus.PRECHECK;
     }
+
     public boolean isPrecheckOrderOfOrderItem(long orderItemId) {
         return orderItemRepository.getOrderStatusOfOrderItem(orderItemId) == OrderStatus.PRECHECK;
     }

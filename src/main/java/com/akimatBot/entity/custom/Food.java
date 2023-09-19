@@ -18,30 +18,25 @@ import java.util.*;
 @Getter
 @Setter
 public class Food {
+    @ManyToOne
+    RestaurantBranch branch;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long     id;
+    private long id;
     @Column(length = 4096)
     private String nameRu;
     private String descriptionRu;
-
     private String nameKz;
     private String descriptionKz;
     private Integer price;
-
     private Long remains;
     private Long countOrders = 0L;
-
     private Date lastChanged;
-
-    @ManyToOne
-    RestaurantBranch branch;
-
     @ManyToOne
     private FoodCategory foodCategory;
 
     private Boolean activated;
-//    @Column(nullable = true)
+    //    @Column(nullable = true)
 //    private boolean hasSpecialOffer;
 //    @Column(nullable = true)
     private Integer specialOfferSum;
@@ -56,19 +51,18 @@ public class Food {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Kitchen> kitchens;
 
-    public String getFoodDescription(Language lang){
-        if(lang == Language.ru){
+    public String getFoodDescription(Language lang) {
+        if (lang == Language.ru) {
             return descriptionRu;
-        }
-        else {
+        } else {
             return descriptionKz;
         }
     }
-    public String getFoodName(Language lang){
-        if(lang == Language.ru){
+
+    public String getFoodName(Language lang) {
+        if (lang == Language.ru) {
             return nameRu;
-        }
-        else {
+        } else {
             return nameKz;
         }
     }
@@ -121,7 +115,7 @@ public class Food {
 
     private List<KitchenDTO> getKitchensDTO() {
         List<KitchenDTO> dtos = new ArrayList<>();
-        for (Kitchen kitchen : this.kitchens){
+        for (Kitchen kitchen : this.kitchens) {
             dtos.add(kitchen.getDTO());
         }
         return dtos;

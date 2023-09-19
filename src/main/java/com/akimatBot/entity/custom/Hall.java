@@ -3,14 +3,11 @@ package com.akimatBot.entity.custom;
 import com.akimatBot.web.dto.DeskDTO;
 import com.akimatBot.web.dto.HallDTO;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 //@Data
 @AllArgsConstructor
@@ -18,15 +15,13 @@ import java.util.Map;
 @Getter
 public class Hall {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long     id;
-
-    private String name;
-
     @OneToMany(mappedBy = "hall")
     @OrderBy("id ASC")
     List<Desk> desks;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    private String name;
 
     public Hall() {
     }
@@ -40,6 +35,7 @@ public class Hall {
 
         return hallDTO;
     }
+
     public HallDTO getDTONotFull() {
 
         HallDTO hallDTO = new HallDTO();
@@ -47,6 +43,7 @@ public class Hall {
         hallDTO.setName(this.name);
         return hallDTO;
     }
+
     public HallDTO getDTOSimple() {
 
         HallDTO hallDTO = new HallDTO();
@@ -57,7 +54,7 @@ public class Hall {
 
     private List<DeskDTO> getDesksDTO() {
         List<DeskDTO> dtos = new ArrayList<>();
-        for (Desk desk : this.desks){
+        for (Desk desk : this.desks) {
             dtos.add(desk.getDeskDTONotFull());
         }
         return dtos;

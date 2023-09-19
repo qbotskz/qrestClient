@@ -2,19 +2,16 @@ package com.akimatBot.web.configuration;
 
 import com.akimatBot.web.security.jwt.JwtConfigurer;
 import com.akimatBot.web.security.jwt.JwtTokenProvider;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.context.annotation.Bean;
-        import org.springframework.context.annotation.Configuration;
-        import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-        import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.List;
 
 /**
  * Security configuration class for JWT based Spring Security application.
@@ -29,8 +26,6 @@ import java.util.List;
 
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final JwtTokenProvider jwtTokenProvider;
-
     private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
     private static final String LOGIN_ENDPOINT = "/api/auth/login";
     private static final String PRINTER_ENDPOINT = "/api/websocket/**";
@@ -38,11 +33,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String MOBILE_DESK_ENDPOINT = "/api/desk/**";
     private static final String MOBILE_HALL_ENDPOINT = "/api/hall/**";
     private static final String MOBILE_MAIN_ENDPOINT = "/api/main/**";
-
     private static final String MOBILE_GENERAL_SHIFT_ENDPOINT = "/api/mobile/shift/general/**";
-
     private static final String PRINTER_CONNECTION_ENDPOINT = "/api/printer/**";
     private static final String CLIENT_ENDPOINT = "/api/client/**";
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Autowired
@@ -75,9 +69,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
-
-
-
 
 
     }

@@ -14,7 +14,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,52 +24,43 @@ import java.util.*;
 public class FoodOrder {
 
 
+    @ManyToOne
+    Desk desk;
+    @OneToOne
+    Cheque cheque;
+    @Enumerated
+    OrderStatus orderStatus;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private Date createdDate;
     @ManyToOne
     private Employee waiter;
-
-    @ManyToOne
-    Desk desk;
-
-    @OneToMany(mappedBy="foodOrder")
+    @OneToMany(mappedBy = "foodOrder")
     private List<Guest> guests;
-
     private Boolean deliverNeed = false;
-
     private String address;
-
-
     private Date completionDate;
-
     private OrderType orderType;
-
-    @OneToOne
-    Cheque cheque;
-
-    @Enumerated
-    OrderStatus orderStatus;
 
 
     public FoodOrder() {
 
     }
+
     public List<Guest> getGuests() {
         guests = TelegramBotRepositoryProvider.getGuestRepo()
                 .findAllByFoodOrderAndDeletedFalseOrderByIdAsc(this);
         return guests;
     }
+
     public long getGuestsSize() {
-        return  TelegramBotRepositoryProvider.getGuestRepo()
+        return TelegramBotRepositoryProvider.getGuestRepo()
                 .getGuestsSizeOfOrder(this.id);
     }
 
 
-
-    public void addGuest(Guest guest){
+    public void addGuest(Guest guest) {
         if (guests == null)
             guests = new ArrayList<>();
 
@@ -76,9 +69,9 @@ public class FoodOrder {
 
 
     public User getClientByChatId(long chatId) {
-        if (guests!= null){
-            for (Guest guest : guests){
-                if (guest.getClient().getChatId() == chatId){
+        if (guests != null) {
+            for (Guest guest : guests) {
+                if (guest.getClient().getChatId() == chatId) {
                     return guest.getClient();
                 }
             }
@@ -88,10 +81,9 @@ public class FoodOrder {
 
     public void minusItem(OrderItem orderItem, int quantity) {
 
-        if (orderItem.getQuantity() == quantity){
+        if (orderItem.getQuantity() == quantity) {
             TelegramBotRepositoryProvider.getOrderItemRepository().delete(orderItem);
-        }
-        else {
+        } else {
             orderItem.setQuantity(orderItem.getQuantity() - quantity);
             TelegramBotRepositoryProvider.getOrderItemRepository().save(orderItem);
         }
@@ -113,6 +105,7 @@ public class FoodOrder {
 
         return foodOrderDTO;
     }
+
     public FoodOrderDTO getClientFoodOrderDTO(Language language) {
 
         FoodOrderDTO foodOrderDTO = new FoodOrderDTO();
@@ -136,13 +129,12 @@ public class FoodOrder {
 
         List<GuestDTO> items = new ArrayList<>();
 
-        for (Guest guest :  getGuests()) {
+        for (Guest guest : getGuests()) {
             items.add(guest.getGuestDTO(language));
         }
 
         return items;
     }
-
 
 
 }

@@ -3,12 +3,12 @@ package com.akimatBot.entity.custom;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.sql.Time;
 
-@Entity
 @Data
-
+@Entity
 public class AboutRestaurant {
 
     @Id

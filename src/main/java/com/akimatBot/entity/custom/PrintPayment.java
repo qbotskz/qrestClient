@@ -27,7 +27,11 @@ public class PrintPayment {
 
     String printerName;
 
-    public PrintPaymentDTO getDTO(){
+    public PrintPayment(long id) {
+        this.id = id;
+    }
+
+    public PrintPaymentDTO getDTO() {
         PrintPaymentDTO printPaymentDTO = new PrintPaymentDTO();
         printPaymentDTO.setId(this.getId());
         printPaymentDTO.setPrecheckDate(this.precheckDate);
@@ -37,9 +41,5 @@ public class PrintPayment {
         printPaymentDTO.setHallName(this.getHallName());
         printPaymentDTO.setDeskNumber(this.getDeskNumber());
         return printPaymentDTO;
-    }
-
-    public PrintPayment(long id) {
-        this.id = id;
     }
 }

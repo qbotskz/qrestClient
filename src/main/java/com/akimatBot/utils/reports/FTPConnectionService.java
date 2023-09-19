@@ -7,14 +7,8 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -28,23 +22,23 @@ FTPConnectionService {
         pass: @99abc123
         */
 
-    private final   String          server     =  "109.233.108.126";//"91.215.136.38";
-    private final   int             port       =  22;
+    private final String server = "109.233.108.126";//"91.215.136.38";
+    private final int port = 22;
 
-//    private final   String          directory       =  "/bot/";
-    private final   String          user       =  "$$$CafeTest";//"Администратор";
-    private final   String          password   =  "Qbots2023/";//"DreamTeam2022";
-    private         FTPClient       ftp;
-    private         boolean         success;
-    private         List<FTPFile>   ftpFiles;
+    //    private final   String          directory       =  "/bot/";
+    private final String user = "$$$CafeTest";//"Администратор";
+    private final String password = "Qbots2023/";//"DreamTeam2022";
+    private FTPClient ftp;
+    private boolean success;
+    private List<FTPFile> ftpFiles;
 
-    public FTPClient     connectInit() {
-        ftp                 = new FTPClient();
+    public FTPClient connectInit() {
+        ftp = new FTPClient();
         try {
             ftp.connect(server, port);
 
             showServerReply(ftp);
-            int replyCode   = ftp.getReplyCode();
+            int replyCode = ftp.getReplyCode();
             if (!FTPReply.isPositiveCompletion(replyCode))
                 log.error("can't connect ftp server");
             boolean success = ftp.login(user, password);
@@ -62,20 +56,20 @@ FTPConnectionService {
         } catch (UnknownHostException ex) {
             ex.printStackTrace();
             ftp = null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            log.error("Error FtpConnection : ", e); }
+            log.error("Error FtpConnection : ", e);
+        }
         return null;
     }
 
-    public void uploadFile(String fileName, FileInputStream fileInputStream){
+    public void uploadFile(String fileName, FileInputStream fileInputStream) {
 
         try {
 
             FileInputStream fs = new FileInputStream("src/main/resources/images/123.jpg");
 
-            boolean asd =  ftp.storeFile(fileName, fs);
+            boolean asd = ftp.storeFile(fileName, fs);
 //            boolean asd =  ftp.storeFile(fileName, fs);
 
             System.out.println("Inserted -> " + asd);
@@ -96,12 +90,12 @@ FTPConnectionService {
         }
     }
 
-    public boolean  searchFile(String fileName) {
+    public boolean searchFile(String fileName) {
         FTPFile checkFile = ftpFiles.stream().filter(ftpFile -> fileName.equals(ftpFile.getName())).findAny().orElse(null);
-        if (checkFile != null) return true;
-        return false;
+        return checkFile != null;
     }
-    public List<File>  getAllFiles() {
+
+    public List<File> getAllFiles() {
         try {
             List<File> files = new ArrayList<>();
             System.out.println("Before ftp.listFiles()");
@@ -118,7 +112,7 @@ FTPConnectionService {
                         InputStream iStream = ftp.retrieveFileStream(ftpFile.getName());
                         File file = new File(ftpFile.getName());
                         FileUtils.copyInputStreamToFile(iStream, file);
-                        if (file.length() <1){
+                        if (file.length() < 1) {
                             System.out.println("File lenght = 0");
                             i--;
                             continue;
@@ -150,27 +144,27 @@ FTPConnectionService {
 
     private FTPFile[] getListFtpFiles() {
         for (int i = 0; i < 500; i++) {
-            try{
+            try {
                 connectInit();
-                System.out.println("Attempt " + (i+1));
+                System.out.println("Attempt " + (i + 1));
                 ftp.setDataTimeout(3 * 1000);
                 ftp.setDefaultTimeout(3 * 1000);
-                ftp.setSoTimeout(3* 1000);
+                ftp.setSoTimeout(3 * 1000);
                 ftp.setConnectTimeout(3 * 1000);
                 ftp.setControlKeepAliveReplyTimeout(3 * 1000);
                 FTPFile[] asd = ftp.listFiles();
 //                System.out.println(ftp.listDirectories().length  + " directory size");
-                if (asd.length>0) {
-                    return asd ;
+                if (asd.length > 0) {
+                    return asd;
                 }
                 System.out.println("FTP Files size =" + asd.length);
-            }catch (Exception e){
-                if (i == 8 || i == 15){
+            } catch (Exception e) {
+                if (i == 8 || i == 15) {
                     connectInit();
                 }
                 e.printStackTrace();
             }
-            if (i == 9){
+            if (i == 9) {
                 System.out.println("Failure!!!");
             }
         }
@@ -187,15 +181,15 @@ FTPConnectionService {
 //
 //    }
 
-    public File     downloadFile(String fileName, String fileNameServer) throws IOException {
-        File downloadFile           = new File(fileName);
-        OutputStream outputStream   = new BufferedOutputStream(new FileOutputStream(downloadFile));
+    public File downloadFile(String fileName, String fileNameServer) throws IOException {
+        File downloadFile = new File(fileName);
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
         System.out.println("Step 4 " + fileName + " " + fileNameServer);
 
         if (ftp != null) {
             for (int i = 0; i < 10; i++) {
-                try{
-                    System.out.println("Attempt " + (i+1));
+                try {
+                    System.out.println("Attempt " + (i + 1));
                     ftp.setDataTimeout(2 * 1000);
                     ftp.setDefaultTimeout(2 * 1000);
                     ftp.setSoTimeout(2 * 1000);
@@ -204,13 +198,13 @@ FTPConnectionService {
 
                     success = ftp.retrieveFile(fileNameServer, outputStream);
                     break;
-                }catch (Exception e){
-                    if (i == 4){
+                } catch (Exception e) {
+                    if (i == 4) {
                         connectInit();
                     }
                     e.printStackTrace();
                 }
-                if (i == 9){
+                if (i == 9) {
                     System.out.println("Failure!!!");
                 }
             }
@@ -223,9 +217,11 @@ FTPConnectionService {
     }
 
 
-    public boolean  deleteFile(String fileName) throws IOException { return ftp.deleteFile(fileName); }
+    public boolean deleteFile(String fileName) throws IOException {
+        return ftp.deleteFile(fileName);
+    }
 
-    private void    showServerReply(FTPClient ftp) {
+    private void showServerReply(FTPClient ftp) {
         String[] relies = ftp.getReplyStrings();
         if (relies != null && relies.length > 0) for (String aReply : relies) log.info("Server : " + aReply);
     }

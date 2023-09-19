@@ -22,21 +22,32 @@ import java.util.List;
 @NoArgsConstructor
 public class PrintKitchenEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     List<OrderItem> items;
-
     long orderId;
     Date createdDate;
     String waiterName;
     String hallName;
     long deskNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-    public PrintKitchenDTO getDTO(){
+    public PrintKitchenEntity(long id) {
+        this.id = id;
+    }
+
+    public static List<OrderItemDTO> getItemsStr(List<OrderItem> orderItems) {
+        List<OrderItemDTO> dtos = new ArrayList<>();
+        for (OrderItem orderItem : orderItems) {
+            dtos.add(orderItem.getOrderItemDTO(Language.ru));
+        }
+        return dtos;
+//        return new Gson().toJson(dtos);
+    }
+
+    public PrintKitchenDTO getDTO() {
         PrintKitchenDTO printKitchenDTO = new PrintKitchenDTO();
 
         printKitchenDTO.setId(this.id);
@@ -49,20 +60,6 @@ public class PrintKitchenEntity {
 
         return printKitchenDTO;
     }
-
-    public PrintKitchenEntity(long id) {
-        this.id = id;
-    }
-
-    public static List<OrderItemDTO> getItemsStr(List<OrderItem> orderItems){
-        List<OrderItemDTO> dtos = new ArrayList<>();
-        for (OrderItem orderItem : orderItems){
-            dtos.add(orderItem.getOrderItemDTO(Language.ru));
-        }
-        return dtos;
-//        return new Gson().toJson(dtos);
-    }
-
 
 
 }

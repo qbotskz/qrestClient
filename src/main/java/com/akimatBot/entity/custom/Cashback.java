@@ -12,6 +12,6 @@ import javax.persistence.Id;
 public class Cashback {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int     id;
+    private int id;
     private Integer cashbackPercentage;
 }

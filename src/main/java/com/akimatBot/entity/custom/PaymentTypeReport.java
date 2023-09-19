@@ -1,6 +1,5 @@
 package com.akimatBot.entity.custom;
 
-import com.akimatBot.web.dto.PaymentTypeDTO;
 import com.akimatBot.web.dto.PaymentTypeReportDTO;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -11,20 +10,22 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentTypeReport {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
     @ManyToOne
     PaymentType paymentType;
     Double total;
-
     Long quantity;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     public PaymentTypeReport(PaymentType paymentType, Double total, Long quantity) {
         this.paymentType = paymentType;
         this.total = total;
         this.quantity = quantity;
+    }
+
+    public PaymentTypeReport(PaymentType paymentType) {
+        this.paymentType = paymentType;
     }
 
     public PaymentTypeReportDTO getDTO() {
@@ -33,9 +34,5 @@ public class PaymentTypeReport {
         paymentTypeReportDTO.setTotal(total);
         paymentTypeReportDTO.setQuantity(quantity);
         return paymentTypeReportDTO;
-    }
-
-    public PaymentTypeReport(PaymentType paymentType) {
-        this.paymentType = paymentType;
     }
 }

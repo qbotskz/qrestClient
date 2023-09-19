@@ -21,9 +21,9 @@ public class GeneralShiftService {
     @Autowired
     WaiterShiftService waiterShiftService;
 
-    public GeneralShift openShift(Long code){
+    public GeneralShift openShift(Long code) {
 
-        if(!generalShiftRepo.existsByClosingTimeIsNull()){
+        if (!generalShiftRepo.existsByClosingTimeIsNull()) {
             GeneralShift generalShift = new GeneralShift();
             generalShift.setOpenedBy(employeeService.findByCode(code));
             generalShift.setOpeningTime(new Date());
@@ -36,7 +36,7 @@ public class GeneralShiftService {
     public boolean closeShift(Long code) {
 
         GeneralShift generalShift = generalShiftRepo.findFirstByClosingTimeIsNullOrderByIdDesc();
-        if (generalShift != null){
+        if (generalShift != null) {
             generalShift.setClosingTime(new Date());
             generalShift.setClosedBy(employeeService.findByCode(code));
             generalShiftRepo.save(generalShift);

@@ -4,9 +4,6 @@ import com.akimatBot.entity.custom.Food;
 import com.akimatBot.entity.enums.FileType;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.enums.WaitingType;
-import com.akimatBot.entity.standart.Button;
-import com.akimatBot.entity.standart.Role;
-import com.akimatBot.entity.standart.User;
 import com.akimatBot.repository.TelegramBotRepositoryProvider;
 import com.akimatBot.repository.repos.*;
 import com.akimatBot.services.KeyboardMarkUpService;
@@ -22,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
-import org.telegram.telegrambots.meta.api.methods.send.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.*;
-import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -43,58 +39,57 @@ import java.util.*;
 @NoArgsConstructor
 public abstract class Command {
 
+    protected final static boolean EXIT = true;
+    protected final static boolean COMEBACK = false;
+//    protected long messageId;
+    protected static final String next = "\n";
+    protected static final String space = " ";
+    protected static final String hyphen = " - ";
+    protected static BotUtil botUtils;
     @Getter
     @Setter
     protected long id;
     @Getter
     @Setter
     protected long messageId;
-//    protected long messageId;
-
-    protected static BotUtil botUtils;
     protected KeyboardMarkUpService keyboardMarkUpService = new KeyboardMarkUpService();
-    protected              Update               update;
-    protected              DefaultAbsSender     bot;
-    protected              Long                 chatId;
-    protected              Message              updateMessage;
-    protected              String               updateMessageText;
-    protected              int                  updateMessageId;
-//    protected              int                  upMessId;
-    protected              String               editableTextOfMessage;
-    protected              String               updateMessagePhoto;
-    protected              String               updateMessagePhone;
-    protected              String               markChange;
-    protected              int                  lastSendMessageID;
-    protected final static boolean              EXIT                        = true;
-    protected final static boolean              COMEBACK                    = false;
-    protected WaitingType waitingType                 = WaitingType.START;
-    protected static final String               next                        = "\n";
-    protected static final String               space                       = " ";
-    protected static final String               hyphen                      = " - ";
-    protected              String               nextButton                  = ">>";
-    protected              String               prevButton                  = "<<";
-    protected              String               plus                        = "❌";
+    protected Update update;
+    protected DefaultAbsSender bot;
+    protected Long chatId;
+    protected Message updateMessage;
+    protected String updateMessageText;
+    protected int updateMessageId;
+    //    protected              int                  upMessId;
+    protected String editableTextOfMessage;
+    protected String updateMessagePhoto;
+    protected String updateMessagePhone;
+    protected String markChange;
+    protected int lastSendMessageID;
+    protected WaitingType waitingType = WaitingType.START;
+    protected String nextButton = ">>";
+    protected String prevButton = "<<";
+    protected String plus = "❌";
 
-    protected              int                  swap                        = 62;
-    protected              int                  snew                        = 63;
-    protected              int                  sdell                       = 64;
-    protected              int                  sback                       = 65;
+    protected int swap = 62;
+    protected int snew = 63;
+    protected int sdell = 64;
+    protected int sback = 65;
 
-    protected MessageRepository messageRepository                           = TelegramBotRepositoryProvider.getMessageRepository();
-    protected KeyboardMarkUpRepository keyboardMarkUpRepository             = TelegramBotRepositoryProvider.getKeyboardMarkUpRepository();
-//    protected AdminRepository adminRepository                               = TelegramBotRepositoryProvider.getAdminRepository();
-    protected UserRepository userRepository                                 = TelegramBotRepositoryProvider.getUserRepository();
-    protected ButtonRepository buttonRepository                             = TelegramBotRepositoryProvider.getButtonRepository();
+    protected MessageRepository messageRepository = TelegramBotRepositoryProvider.getMessageRepository();
+    protected KeyboardMarkUpRepository keyboardMarkUpRepository = TelegramBotRepositoryProvider.getKeyboardMarkUpRepository();
+    //    protected AdminRepository adminRepository                               = TelegramBotRepositoryProvider.getAdminRepository();
+    protected UserRepository userRepository = TelegramBotRepositoryProvider.getUserRepository();
+    protected ButtonRepository buttonRepository = TelegramBotRepositoryProvider.getButtonRepository();
 
 
     protected OrderRepository orderRepository = TelegramBotRepositoryProvider.getOrderRepository();
 
-    protected RoleRepository roleRepository                         = TelegramBotRepositoryProvider.getOperatorRepository();
+    protected RoleRepository roleRepository = TelegramBotRepositoryProvider.getOperatorRepository();
 
-    protected PropertiesRepo propertiesRepo                                 = TelegramBotRepositoryProvider.getPropertiesRepo();
+    protected PropertiesRepo propertiesRepo = TelegramBotRepositoryProvider.getPropertiesRepo();
     protected FoodRepository foodRepository = TelegramBotRepositoryProvider.getFoodRepository();
     protected FoodCategoryRepo foodCategoryRepo = TelegramBotRepositoryProvider.getFoodCategoryRepo();
-//    protected FoodSubCategoryRepo foodSubCategoryRepo = TelegramBotRepositoryProvider.getFoodSubCategoryRepo();
+    //    protected FoodSubCategoryRepo foodSubCategoryRepo = TelegramBotRepositoryProvider.getFoodSubCategoryRepo();
     protected CourierRepository courierRepository = TelegramBotRepositoryProvider.getCourierRepository();
     protected ReviewRepository reviewRepository = TelegramBotRepositoryProvider.getReviewRepository();
     protected SuggestionComplaintRepo suggestionComplaintRepo = TelegramBotRepositoryProvider.getSuggestionComplaintRepo();
@@ -103,267 +98,6 @@ public abstract class Command {
     protected AboutRestaurantRepo aboutRestaurantRepo = TelegramBotRepositoryProvider.getAboutRestaurantRepo();
 
     protected KaspiAccountsRepository kaspiAccountsRepository = TelegramBotRepositoryProvider.getKaspiAccountsRepository();
-
-    public abstract boolean execute()                                                           throws TelegramApiException, IOException, SQLException, Exception;
-
-    protected int     sendMessageWithKeyboard(int messageId, ReplyKeyboard keyboard)            throws TelegramApiException { return sendMessageWithKeyboard(getText(messageId), keyboard); }
-
-    protected int     sendMessageWithKeyboard(String text, int keyboardId)                      throws TelegramApiException {
-        return sendMessageWithKeyboard(text, keyboardMarkUpService.select(keyboardId, chatId));
-    }
-    protected int     sendMessageWithKeyboardWithChatId(String text, int keyboardId, long chatId)                      throws TelegramApiException {
-        return sendMessageWithKeyboardWithChatId(text, keyboardMarkUpService.select(keyboardId, chatId), chatId);
-    }
-    protected int     sendMessageWithKeyboard(String text, ReplyKeyboard keyboard)              throws TelegramApiException {
-        lastSendMessageID = sendMessageWithKeyboard(text, keyboard, chatId);
-        return lastSendMessageID;
-    }
-    protected int     sendMessageWithKeyboardWithChatId(String text, ReplyKeyboard keyboard, long chatId)              throws TelegramApiException {
-        lastSendMessageID = sendMessageWithKeyboard(text, keyboard, chatId);
-        return lastSendMessageID;
-    }
-    protected void editMessageWithKeyboard(String text, int messageId, int keyboardId) throws TelegramApiException {
-//        botUtils.editMessageWithKeyboard(text, chatId, messageId, keyboardMarkUpService.getInlineKeyboardMarkup(keyboardId, getLanguageId()));
-    }
-    protected void editMessageWithKeyboard(String text, int messageId, InlineKeyboardMarkup inlineKeyboardMarkup) throws TelegramApiException {
-//        botUtils.editMessageWithKeyboard(text, chatId, messageId, inlineKeyboardMarkup);
-    }
-
-//    protected int sendMessGetMessId(int id)      throws TelegramApiException{
-//        return  bot.execute(new SendMessage().setText(getText(id)).setChatId(chatId).setParseMode(String.valueOf(com.akimatBot.entity.enums.ParseMode.html))).getMessageId();
-//    }
-//
-//    protected int sendMessGetMessId(String text)      throws TelegramApiException{
-//        return  bot.execute(new SendMessage().setText(text).setChatId(chatId).setParseMode(String.valueOf(com.akimatBot.entity.enums.ParseMode.html))).getMessageId();
-//    }
-
-    protected int     sendMessageWithKeyboard(String text, ReplyKeyboard keyboard, long chatId) throws TelegramApiException {
-        return botUtils.sendMessageWithKeyboard(text, keyboard, chatId);
-    }
-
-    protected <T> Map<Food, Long> countByClassicalLoop(List<Food> inputList) {
-        Map<Food, Long> resultMap = new TreeMap<>();
-        for (Food element : inputList) {
-            if (resultMap.containsKey(element)) {
-//                if(element.getId() == resultMap.)
-                resultMap.put(element, resultMap.get(element) + 1L);
-            } else {
-                resultMap.put(element, 1L);
-            }
-        }
-        return resultMap;
-    }
-
-
-
-
-//    protected int     sendMessageWithPhoto(long messageId, long chatId, String photo, InlineKeyboardMarkup inlineKeyboardMarkup)   throws TelegramApiException {
-//        lastSendMessageID = botUtils.sendMessage(messageId, chatId, photo, inlineKeyboardMarkup);
-//        return lastSendMessageID;
-//    }
-
-
-
-
-
-
-
-
-    public    void    clear() {
-        update  = null;
-        bot     = null;
-    }
-
-    protected void    deleteMessage(int messageId) {
-        if (messageId > 0)
-            deleteMessage(chatId, messageId);
-    }
-
-    protected void    deleteMessage(long chatId, int messageId) { botUtils.deleteMessage(chatId, messageId); }
-
-    private   void    sendMessageTest(String text, SendMessage sendMessage)                     throws TelegramApiException {
-        try {
-            lastSendMessageID = bot.execute(sendMessage).getMessageId();
-        } catch (TelegramApiRequestException e) {
-            if (e.getApiResponse().contains("Bad Request: can't parse entities")) {
-                sendMessage.setParseMode(null);
-                sendMessage.setText(text + next + "Wrong number");
-                lastSendMessageID = bot.execute(sendMessage).getMessageId();
-            } else throw e;
-        }
-    }
-
-
-    protected int getLanguageId() {
-        return getLanguage(chatId).getId();
-    }
-
-
-
-
-
-
-    protected String  getLinkForUser(long chatId, String userName) { return String.format("<a href = \"tg://user?id=%s\">%s</a>", chatId, userName); }
-
-    protected String  getText(int messageIdFromDb) { return messageRepository.findByIdAndLangId(messageIdFromDb, LanguageService.getLanguage(chatId).getId()).getName(); }
-    protected String  getText(int messageIdFromDb, long chatId) { return messageRepository.findByIdAndLangId(messageIdFromDb, LanguageService.getLanguage(chatId).getId()).getName(); }
-
-    public    boolean isInitNormal(Update update, DefaultAbsSender bot) {
-        if (botUtils == null) botUtils = new BotUtil(bot);
-        this.update = update;
-        this.bot    = bot;
-        chatId      = UpdateUtil.getChatId(update);
-        if (update.hasCallbackQuery()) {
-            CallbackQuery callbackQuery = update.getCallbackQuery();
-            updateMessage               = callbackQuery.getMessage();
-            updateMessageText           = callbackQuery.getData();
-            updateMessageId             = updateMessage.getMessageId();
-            editableTextOfMessage       = callbackQuery.getMessage().getText();
-        } else if (update.hasMessage()) {
-            updateMessage               = update.getMessage();
-            updateMessageId             = updateMessage.getMessageId();
-            if (updateMessage.hasText()) updateMessageText = updateMessage.getText();
-            if (updateMessage.hasPhoto()) {
-                int size                = update.getMessage().getPhoto().size();
-                updateMessagePhoto      = update.getMessage().getPhoto().get(size - 1).getFileId();
-            } else {
-                updateMessagePhoto      = null;
-            }
-        }
-        if (hasContact()) updateMessagePhone = update.getMessage().getContact().getPhoneNumber();
-        if (markChange == null) markChange = getText(Const.  EDIT_BUTTON_ICON);
-        return false;
-    }
-
-
-
-    protected boolean hasContact() { return update.hasMessage() && update.getMessage().getContact() != null; }
-
-//    protected boolean isButton(int buttonId) { return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, getLanguage(chatId).getId()).getName()); }
-    protected boolean isButton(int buttonId) {
-        if(updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, Language.getById(1).getId()).getName())) {
-            return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId,Language.getById(1).getId() ).getName());
-        }
-        return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId,Language.getById(2).getId() ).getName());
-
-    }
-    protected boolean hasCallbackQuery() { return update.hasCallbackQuery();}
-    protected CallbackQuery getCallbackQuery(){
-        return update.getCallbackQuery();
-    }
-
-    protected boolean hasMessageText() { return update.hasMessage() && update.getMessage().hasText(); }
-
-    protected boolean hasPhoto() { return update.hasMessage() && update.getMessage().hasPhoto(); }
-
-    protected boolean hasDocument() { return update.hasMessage() && update.getMessage().hasDocument(); }
-
-    protected boolean hasAudio() { return update.hasMessage() && update.getMessage().getAudio() != null; }
-
-    protected boolean hasVideo() { return update.hasMessage() && update.getMessage().getVideo() != null; }
-
-    protected String  getBolt(String s) { return "<b>" + s + "</b>"; }
-
-    protected String getButtonText(int id){ return buttonRepository.findByIdAndLangId(id, getLanguage(chatId).getId()).getName(); }
-
-    protected int onlyNumbers(String strNum){ return Integer.parseInt(strNum.replaceAll("[^0-9]", "")); }
-
-
-
-
-
-
-
-    protected void editMessageWithPhotoAndKeyboard(String text, InlineKeyboardMarkup inlineKeyboardMarkup, long chatId, int messageId) throws TelegramApiException {
-        EditMessageCaption editMessageCaption = new EditMessageCaption();
-        editMessageCaption.setMessageId(messageId);
-        editMessageCaption.setCaption(text);
-        editMessageCaption.setChatId(String.valueOf(chatId));
-        editMessageCaption.setReplyMarkup(inlineKeyboardMarkup);
-        bot.execute(editMessageCaption);
-    }
-
-
-
-    protected String getColor(Date startDate) {
-        String green = "\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2";
-        String yellow = "\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1";
-        String red = "\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34";
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = new Date();
-
-        calendar.setTime(startDate);
-        calendar.add(Calendar.HOUR_OF_DAY, 24);
-
-        Date dateDeadline= calendar.getTime();
-
-        if (currentDate.before(dateDeadline)){
-            return  green;
-        }
-        calendar.add(Calendar.HOUR_OF_DAY, 24);
-        dateDeadline = calendar.getTime();
-
-        if (currentDate.before(dateDeadline)){
-            return yellow;
-        }
-
-        return red;
-    }
-
-
-    protected String getPhoneNumber(String contact) {
-//        77006804045
-//       +77006804045
-//        87006804045
-        if (contact.charAt(0) == '8'){
-            contact = contact.replaceFirst("8", "+7");
-        }
-        else if (contact.charAt(0) == '7'){
-            contact = contact.replaceFirst("7", "+7");
-        }
-        return contact;
-    }
-
-    protected void deleteAll(int updMes) { deleteMessage(updateMessageId); deleteMessage(updMes); }
-
-
-    public Language getLanguage(long chatId) {
-        if (chatId == 0) return Language.ru;
-        return LanguageService.getLanguage(chatId);
-    }
-  public Language getLanguage() {
-        if (chatId == 0) return Language.ru;
-        return LanguageService.getLanguage(chatId);
-    }
-
-
-
-    protected long getLong(String updateMessageText) {
-        try {
-            return Long.parseLong(updateMessageText);
-        }
-        catch (Exception e){
-            return -1;
-        }
-    }
-    protected boolean isLong(String mess){
-        try{
-            Long.parseLong(mess);
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
-    }
-    protected int getInt(String updateMessageText) {
-        try {
-            return Integer.parseInt(updateMessageText);
-        }
-        catch (Exception e){
-            return -1;
-        }
-    }
-
 
     public static String formatPhone(String phoneNumber) {
 
@@ -378,21 +112,285 @@ public abstract class Command {
         return phoneNumber;
     }
 
-    protected boolean isIIN(String updateMessageText) {
+    public abstract boolean execute() throws Exception;
+
+    protected int sendMessageWithKeyboard(int messageId, ReplyKeyboard keyboard) throws TelegramApiException {
+        return sendMessageWithKeyboard(getText(messageId), keyboard);
+    }
+
+    protected int sendMessageWithKeyboard(String text, int keyboardId) throws TelegramApiException {
+        return sendMessageWithKeyboard(text, keyboardMarkUpService.select(keyboardId, chatId));
+    }
+
+    protected int sendMessageWithKeyboardWithChatId(String text, int keyboardId, long chatId) throws TelegramApiException {
+        return sendMessageWithKeyboardWithChatId(text, keyboardMarkUpService.select(keyboardId, chatId), chatId);
+    }
+
+    protected int sendMessageWithKeyboard(String text, ReplyKeyboard keyboard) throws TelegramApiException {
+        lastSendMessageID = sendMessageWithKeyboard(text, keyboard, chatId);
+        return lastSendMessageID;
+    }
+
+    protected int sendMessageWithKeyboardWithChatId(String text, ReplyKeyboard keyboard, long chatId) throws TelegramApiException {
+        lastSendMessageID = sendMessageWithKeyboard(text, keyboard, chatId);
+        return lastSendMessageID;
+    }
+
+    protected void editMessageWithKeyboard(String text, int messageId, int keyboardId) throws TelegramApiException {
+//        botUtils.editMessageWithKeyboard(text, chatId, messageId, keyboardMarkUpService.getInlineKeyboardMarkup(keyboardId, getLanguageId()));
+    }
+
+//    protected int sendMessGetMessId(int id)      throws TelegramApiException{
+//        return  bot.execute(new SendMessage().setText(getText(id)).setChatId(chatId).setParseMode(String.valueOf(com.akimatBot.entity.enums.ParseMode.html))).getMessageId();
+//    }
+//
+//    protected int sendMessGetMessId(String text)      throws TelegramApiException{
+//        return  bot.execute(new SendMessage().setText(text).setChatId(chatId).setParseMode(String.valueOf(com.akimatBot.entity.enums.ParseMode.html))).getMessageId();
+//    }
+
+    protected void editMessageWithKeyboard(String text, int messageId, InlineKeyboardMarkup inlineKeyboardMarkup) throws TelegramApiException {
+//        botUtils.editMessageWithKeyboard(text, chatId, messageId, inlineKeyboardMarkup);
+    }
+
+    protected int sendMessageWithKeyboard(String text, ReplyKeyboard keyboard, long chatId) throws TelegramApiException {
+        return botUtils.sendMessageWithKeyboard(text, keyboard, chatId);
+    }
+
+
+//    protected int     sendMessageWithPhoto(long messageId, long chatId, String photo, InlineKeyboardMarkup inlineKeyboardMarkup)   throws TelegramApiException {
+//        lastSendMessageID = botUtils.sendMessage(messageId, chatId, photo, inlineKeyboardMarkup);
+//        return lastSendMessageID;
+//    }
+
+    protected <T> Map<Food, Long> countByClassicalLoop(List<Food> inputList) {
+        Map<Food, Long> resultMap = new TreeMap<>();
+        for (Food element : inputList) {
+            if (resultMap.containsKey(element)) {
+//                if(element.getId() == resultMap.)
+                resultMap.put(element, resultMap.get(element) + 1L);
+            } else {
+                resultMap.put(element, 1L);
+            }
+        }
+        return resultMap;
+    }
+
+    public void clear() {
+        update = null;
+        bot = null;
+    }
+
+    protected void deleteMessage(int messageId) {
+        if (messageId > 0)
+            deleteMessage(chatId, messageId);
+    }
+
+    protected void deleteMessage(long chatId, int messageId) {
+        botUtils.deleteMessage(chatId, messageId);
+    }
+
+    private void sendMessageTest(String text, SendMessage sendMessage) throws TelegramApiException {
         try {
-            Long.parseLong(updateMessageText);
-            return updateMessageText.length() == 12;
-        }catch (Exception e){
+            lastSendMessageID = bot.execute(sendMessage).getMessageId();
+        } catch (TelegramApiRequestException e) {
+            if (e.getApiResponse().contains("Bad Request: can't parse entities")) {
+                sendMessage.setParseMode(null);
+                sendMessage.setText(text + next + "Wrong number");
+                lastSendMessageID = bot.execute(sendMessage).getMessageId();
+            } else throw e;
+        }
+    }
+
+    protected int getLanguageId() {
+        return getLanguage(chatId).getId();
+    }
+
+    protected String getLinkForUser(long chatId, String userName) {
+        return String.format("<a href = \"tg://user?id=%s\">%s</a>", chatId, userName);
+    }
+
+    protected String getText(int messageIdFromDb) {
+        return messageRepository.findByIdAndLangId(messageIdFromDb, LanguageService.getLanguage(chatId).getId()).getName();
+    }
+
+    protected String getText(int messageIdFromDb, long chatId) {
+        return messageRepository.findByIdAndLangId(messageIdFromDb, LanguageService.getLanguage(chatId).getId()).getName();
+    }
+
+    public boolean isInitNormal(Update update, DefaultAbsSender bot) {
+        if (botUtils == null) botUtils = new BotUtil(bot);
+        this.update = update;
+        this.bot = bot;
+        chatId = UpdateUtil.getChatId(update);
+        if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+            updateMessage = callbackQuery.getMessage();
+            updateMessageText = callbackQuery.getData();
+            updateMessageId = updateMessage.getMessageId();
+            editableTextOfMessage = callbackQuery.getMessage().getText();
+        } else if (update.hasMessage()) {
+            updateMessage = update.getMessage();
+            updateMessageId = updateMessage.getMessageId();
+            if (updateMessage.hasText()) updateMessageText = updateMessage.getText();
+            if (updateMessage.hasPhoto()) {
+                int size = update.getMessage().getPhoto().size();
+                updateMessagePhoto = update.getMessage().getPhoto().get(size - 1).getFileId();
+            } else {
+                updateMessagePhoto = null;
+            }
+        }
+        if (hasContact()) updateMessagePhone = update.getMessage().getContact().getPhoneNumber();
+        if (markChange == null) markChange = getText(Const.EDIT_BUTTON_ICON);
+        return false;
+    }
+
+    protected boolean hasContact() {
+        return update.hasMessage() && update.getMessage().getContact() != null;
+    }
+
+    //    protected boolean isButton(int buttonId) { return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, getLanguage(chatId).getId()).getName()); }
+    protected boolean isButton(int buttonId) {
+        if (updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, Language.getById(1).getId()).getName())) {
+            return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, Language.getById(1).getId()).getName());
+        }
+        return updateMessageText.equals(buttonRepository.findByIdAndLangId(buttonId, Language.getById(2).getId()).getName());
+
+    }
+
+    protected boolean hasCallbackQuery() {
+        return update.hasCallbackQuery();
+    }
+
+    protected CallbackQuery getCallbackQuery() {
+        return update.getCallbackQuery();
+    }
+
+    protected boolean hasMessageText() {
+        return update.hasMessage() && update.getMessage().hasText();
+    }
+
+    protected boolean hasPhoto() {
+        return update.hasMessage() && update.getMessage().hasPhoto();
+    }
+
+    protected boolean hasDocument() {
+        return update.hasMessage() && update.getMessage().hasDocument();
+    }
+
+    protected boolean hasAudio() {
+        return update.hasMessage() && update.getMessage().getAudio() != null;
+    }
+
+    protected boolean hasVideo() {
+        return update.hasMessage() && update.getMessage().getVideo() != null;
+    }
+
+    protected String getBolt(String s) {
+        return "<b>" + s + "</b>";
+    }
+
+    protected String getButtonText(int id) {
+        return buttonRepository.findByIdAndLangId(id, getLanguage(chatId).getId()).getName();
+    }
+
+    protected int onlyNumbers(String strNum) {
+        return Integer.parseInt(strNum.replaceAll("[^0-9]", ""));
+    }
+
+    protected void editMessageWithPhotoAndKeyboard(String text, InlineKeyboardMarkup inlineKeyboardMarkup, long chatId, int messageId) throws TelegramApiException {
+        EditMessageCaption editMessageCaption = new EditMessageCaption();
+        editMessageCaption.setMessageId(messageId);
+        editMessageCaption.setCaption(text);
+        editMessageCaption.setChatId(String.valueOf(chatId));
+        editMessageCaption.setReplyMarkup(inlineKeyboardMarkup);
+        bot.execute(editMessageCaption);
+    }
+
+    protected String getColor(Date startDate) {
+        String green = "\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2\uD83D\uDFE2";
+        String yellow = "\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1\uD83D\uDFE1";
+        String red = "\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34\uD83D\uDD34";
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = new Date();
+
+        calendar.setTime(startDate);
+        calendar.add(Calendar.HOUR_OF_DAY, 24);
+
+        Date dateDeadline = calendar.getTime();
+
+        if (currentDate.before(dateDeadline)) {
+            return green;
+        }
+        calendar.add(Calendar.HOUR_OF_DAY, 24);
+        dateDeadline = calendar.getTime();
+
+        if (currentDate.before(dateDeadline)) {
+            return yellow;
+        }
+
+        return red;
+    }
+
+    protected String getPhoneNumber(String contact) {
+//        77006804045
+//       +77006804045
+//        87006804045
+        if (contact.charAt(0) == '8') {
+            contact = contact.replaceFirst("8", "+7");
+        } else if (contact.charAt(0) == '7') {
+            contact = contact.replaceFirst("7", "+7");
+        }
+        return contact;
+    }
+
+    protected void deleteAll(int updMes) {
+        deleteMessage(updateMessageId);
+        deleteMessage(updMes);
+    }
+
+    public Language getLanguage(long chatId) {
+        if (chatId == 0) return Language.ru;
+        return LanguageService.getLanguage(chatId);
+    }
+
+    public Language getLanguage() {
+        if (chatId == 0) return Language.ru;
+        return LanguageService.getLanguage(chatId);
+    }
+
+    protected long getLong(String updateMessageText) {
+        try {
+            return Long.parseLong(updateMessageText);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    protected boolean isLong(String mess) {
+        try {
+            Long.parseLong(mess);
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
 
+    protected int getInt(String updateMessageText) {
+        try {
+            return Integer.parseInt(updateMessageText);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 
-
-
-
-
-
+    protected boolean isIIN(String updateMessageText) {
+        try {
+            Long.parseLong(updateMessageText);
+            return updateMessageText.length() == 12;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
     protected int getLangId() {
@@ -433,7 +431,7 @@ public abstract class Command {
         }
     }
 
-    public int sendMedia(String fileId, FileType fileType , long chatId) throws TelegramApiException {
+    public int sendMedia(String fileId, FileType fileType, long chatId) throws TelegramApiException {
         if (fileId != null && fileType != null) {
             switch (fileType) {
                 case photo:
@@ -450,12 +448,12 @@ public abstract class Command {
         return 0;
     }
 
-    public int  sendMedia(String fileId, FileType fileType ) throws TelegramApiException {
-        return sendMedia(fileId, fileType ,chatId);
+    public int sendMedia(String fileId, FileType fileType) throws TelegramApiException {
+        return sendMedia(fileId, fileType, chatId);
     }
 
     public int sendPhoto(String photo, long chatId) throws TelegramApiException {
-        SendPhoto sendPhoto             = new SendPhoto();
+        SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setChatId(String.valueOf(chatId));
         sendPhoto.setPhoto(new InputFile(photo));
 
@@ -467,6 +465,7 @@ public abstract class Command {
         }
         return 0;
     }
+
     public int sendVideo(String video, long chatId) throws TelegramApiException {
 
         SendVideo sendVideo = new SendVideo();
@@ -489,7 +488,6 @@ public abstract class Command {
         sendDocument.setDocument(new InputFile(fileId));
 
 
-
         try {
             return bot.execute(sendDocument).getMessageId();
         } catch (TelegramApiException e) {
@@ -499,7 +497,7 @@ public abstract class Command {
         return 0;
     }
 
-    public int sendDocument(String fileId,String mess, long chatId) throws TelegramApiException {
+    public int sendDocument(String fileId, String mess, long chatId) throws TelegramApiException {
         SendDocument sendDocument = new SendDocument();
         sendDocument.setChatId(String.valueOf(chatId));
         sendDocument.setDocument(new InputFile(fileId));
@@ -562,7 +560,7 @@ public abstract class Command {
     }
 
     protected int sendMessage(String text, long chatId, Contact contact) throws TelegramApiException {
-        int mes=  botUtils.sendMessage(text, chatId);
+        int mes = botUtils.sendMessage(text, chatId);
         if (contact != null) {
             botUtils.sendContact(chatId, contact);
         }
@@ -570,25 +568,14 @@ public abstract class Command {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     protected boolean isButtonExist(String name) {
 
         return buttonRepository.countByNameAndLangId(name, getLangId()) > 0;
     }
 
-    protected String getBold(String text){
-        return "<b>"+text+"</b>";
+    protected String getBold(String text) {
+        return "<b>" + text + "</b>";
     }
-
 
 
     protected int toDeleteMessage(int messageDeleteId) {
@@ -612,12 +599,6 @@ public abstract class Command {
     }
 
 
-
-
-
-
-
-
     protected String uploadFile(String fileId) {
         Objects.requireNonNull(fileId);
         GetFile getFile = new GetFile();
@@ -631,13 +612,11 @@ public abstract class Command {
     }
 
 
-
-
-
     protected boolean isRegistered() {
         return userRepository.existsByChatIdAndPhoneNotNull(chatId);
 
     }
+
     protected boolean isRegistered(long chatId) {
         return userRepository.existsByChatIdAndPhoneNotNull(chatId);
 

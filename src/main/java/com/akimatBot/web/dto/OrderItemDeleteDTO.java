@@ -15,17 +15,14 @@ import java.util.Date;
 public class OrderItemDeleteDTO implements Serializable {
 
     long id;
-    private OrderItemDTO orderItem;
-
-    private String reason;
-//    private String printerName;
-
     long orderId;
     String waiterName;
+//    private String printerName;
     String hallName;
     long deskNumber;
     Date date;
-
+    private OrderItemDTO orderItem;
+    private String reason;
 
 
 }

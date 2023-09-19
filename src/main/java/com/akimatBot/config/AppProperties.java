@@ -1,6 +1,5 @@
 package com.akimatBot.config;
 
-import com.akimatBot.entity.custom.Food;
 import lombok.Getter;
 
 import java.io.InputStream;
