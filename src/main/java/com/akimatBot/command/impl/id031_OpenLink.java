@@ -3,6 +3,9 @@ package com.akimatBot.command.impl;
 
 import com.akimatBot.command.Command;
 import com.akimatBot.config.AppProperties;
+import com.akimatBot.entity.custom.Desk;
+import com.akimatBot.entity.custom.FoodOrder;
+import com.akimatBot.entity.custom.Guest;
 import com.akimatBot.entity.standart.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -27,8 +30,14 @@ public class id031_OpenLink extends Command {
                 updateMessageText = updateMessageText.replaceAll("/start", "");
                 updateMessageText = updateMessageText.replaceAll(" ", "");
                 Long id = Long.parseLong(updateMessageText);
+                System.out.println(chatId);
                 User user = userRepository.findByChatId(chatId);
-                if ( user.getCurrentGuest() == null
+                if (user == null) {
+                    user = new User();
+                    user.setChatId(chatId);
+                }
+
+                if (user.getCurrentGuest() == null
                         ||
                         user.getCurrentGuest().getFoodOrder().getDesk().getId() == id){
                     sendWebApp(id, user);

@@ -22,140 +22,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class id001_ShowInfo extends Command {
-    private User user;
-    private final UserRepository userRepository = TelegramBotRepositoryProvider.getUserRepository();
-    private final List<Role> roles = new ArrayList<>(Collections.singletonList(new Role(2)));
-
-
     // This command is executed when /start was clicked
     @Override
     public boolean execute() throws TelegramApiException {
-
         sendWebApp();
-
-//        if (!isRegistered()) {
-//            user = new User();
-//            user.setChatId(chatId);
-//            user.setFullName(update.getMessage().getFrom().getFirstName() + " " + update.getMessage().getFrom().getLastName());
-//            user.setUserName(update.getMessage().getFrom().getUserName());
-//            user.setRoles(roles);
-//            user.setCashback(0);
-//            user.setLanguage(Language.ru);
-//            user = userRepository.save(user);
-//
-//            switch (waitingType){
-//                case START:
-//
-//                    sendMessageWithKeyboard(getText(220), 93);
-//                    waitingType = WaitingType.CHOOSE_OPTION;
-//                    return COMEBACK;
-//                case CHOOSE_OPTION:
-//                    if(hasCallbackQuery()){
-////                        if(isButton(228)){
-////                            user.setCity(City.ALMATY);
-////                        }
-////                        else if(isButton(229)){
-////                            user.setCity(City.NUR_SULTAN);
-////                        }
-//                        break;
-//                    }
-//
-//            }
-////            switch (waitingType) {
-////                case START:
-////                    user = new User();
-////                    user.setChatId(chatId);
-////                    user.setFullName(update.getMessage().getFrom().getFirstName() + " " + update.getMessage().getFrom().getLastName());
-////                    user.setUserName(update.getMessage().getFrom().getUserName());
-////                    user.setRoles(roles);
-////                    shortInfo();
-////                    getName();
-////                    //getPhone();
-////                    waitingType = WaitingType.CONFIRM_NAME;
-////                    return COMEBACK;
-////                case CONFIRM_NAME:
-////                    if(update.hasMessage()&&update.getMessage().hasText()){
-////                        user.setFullName(update.getMessage().getText());
-////                        getPhone();
-////                        waitingType = WaitingType.CONFIRM_PHONE;
-////                        return COMEBACK;
-////                    }
-////                case CONFIRM_PHONE:
-////                    if (botUtils.hasContactOwner(update)) {
-////                        String phone = update.getMessage().getContact().getPhoneNumber();
-////                        if (phone.startsWith("7")){
-////                            phone = "+"+phone;
-////                        }
-////                        else if(phone.startsWith("8")){
-////                            phone = phone.replaceFirst("8", "+7");
-////                        }
-////                        user.setPhone(phone);
-////
-////                        getGender();
-////                        waitingType = WaitingType.CHOOSE_GENDER;
-////                    } else {
-////                        getPhone();
-////                    }
-////                    return COMEBACK;
-////                case CHOOSE_GENDER:
-////
-////                    if (isButton(103)) {
-////                        user.setGender(Gender.MAN);
-////                    } else {
-////                        user.setGender(Gender.WOMAN);
-////                    }
-////                    userRepository.save(user);
-////                    sendMessageWithAddition();
-////                    return EXIT;
-////            }
-//
-//        }
         deleteMessage(updateMessageId);
         LanguageService.setLanguage(chatId, Language.ru);
-//        sendMessageWithKeyboard("Главное меню", 2);
-//        sendMessageWithAddition();
-        //if(!isButton(1)) sendMessageWithAddition();
-
         return EXIT;
     }
 
     private void sendWebApp() throws TelegramApiException {
-        WebAppData webAppData = new WebAppData();
-        webAppData.setData("asd");
-
-//        AnswerWebAppQuery answerWebAppQuery = new AnswerWebAppQuery();
-//        answerWebAppQuery.setQueryResult();
-
-        WebAppInfo webAppInfo = new WebAppInfo();
-        webAppInfo.setUrl(
-                "https://" + AppProperties.properties.getProperty("server.address")
-                        + ":" + AppProperties.properties.getProperty("customPort"));
-
-        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-        inlineKeyboardButton.setWebApp(webAppInfo);
-        inlineKeyboardButton.setText(AppProperties.properties.getProperty("restoranName"));
-
-        InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
-        replyKeyboardMarkup.setKeyboard(Arrays.asList(Arrays.asList(inlineKeyboardButton)));
-
-        sendMessageWithKeyboard("Нажмите кнопку", replyKeyboardMarkup);
+        sendMessage("Құрметті қонақ!\n" +
+                "\n" +
+                "Тапсырыс беру үшін QR код сканерлеңіз.\n" +
+                "\n" +
+                "\n" +
+                "Уважаемый гость!\n" +
+                "\n" +
+                "Для оформления заказа, пожалуйста отсканируйте QR код.");
     }
-
-
-    private int getGender() throws TelegramApiException {
-        return toDeleteKeyboard(sendMessageWithKeyboard(getText(Const.GET_GENDER), 40));
-    }
-
-    private int shortInfo() throws TelegramApiException {
-        return sendMessage(getText(100));
-    }
-
-    private int getPhone() throws TelegramApiException {
-        return sendMessageWithKeyboard(getText(Const.GET_PHONE), 12);
-    }
-
-    private int getName() throws TelegramApiException {
-        return botUtils.sendMessage(Const.GET_NAME, chatId);
-    }
-
 }

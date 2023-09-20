@@ -143,7 +143,11 @@ public class ClientOrderService {
                 orderItem.setFood(food);
                 orderItem = orderItemRepository.save(orderItem);
             }
-            food.setCountOrders(food.getCountOrders() + 1);
+            if (food.getCountOrders() == null) {
+                food.setCountOrders(0L);
+            } else {
+                food.setCountOrders(food.getCountOrders() + 1);
+            }
             if (food.getRemains() != null) {
                 food.setRemains(food.getRemains() - 1);
             }
