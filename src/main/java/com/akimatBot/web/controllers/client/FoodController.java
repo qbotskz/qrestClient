@@ -101,8 +101,12 @@ public class FoodController {
 
         List<FoodCategoryDTO> foodCategoryDTOS = new ArrayList<>();
 
-        for (FoodCategory sub : foodCategoryRepo.findAllByOrderById()) {
-            foodCategoryDTOS.add((sub.getDTO(language)));
+        for (FoodCategory sub : foodCategoryRepo.findAllByPriorityAndNotNull()) {
+            foodCategoryDTOS.add(sub.getDTO(language));
+        }
+
+        for (FoodCategory sub : foodCategoryRepo.findAllByPriorityNull()) {
+            foodCategoryDTOS.add(sub.getDTO(language));
         }
 
         return foodCategoryDTOS;

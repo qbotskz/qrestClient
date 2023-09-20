@@ -27,6 +27,8 @@ public class FoodCategory {
     private String descriptionRu;
     @Column(length = 4096)
     private String descriptionKz;
+    @Column
+    private Long priority;
 
 
 //    @ManyToOne
@@ -81,6 +83,7 @@ public class FoodCategory {
         foodCategoryDTO.setName(this.getName(language.getId()));
         foodCategoryDTO.setDescription(this.getDescription(language));
         foodCategoryDTO.setFoods(getFoodsDTO(language));
+        foodCategoryDTO.setPriority(this.getPriority());
         return foodCategoryDTO;
     }
 
