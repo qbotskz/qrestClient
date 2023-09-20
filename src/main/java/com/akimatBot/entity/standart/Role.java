@@ -11,19 +11,17 @@ import javax.persistence.Id;
 @Data
 @Entity
 public class Role {
+    String name;
+    String description;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long     id;
+    private long id;
 
     public Role(long id) {
         this.id = id;
     }
-
     public Role() {
     }
-
-    String name;
-    String description;
 
     public RoleDTO getDTO() {
         RoleDTO roleDTO = new RoleDTO();

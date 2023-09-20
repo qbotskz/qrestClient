@@ -4,7 +4,6 @@ import com.akimatBot.entity.custom.PDFFilesToPrint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.access.method.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -19,7 +18,7 @@ public interface PDFFilesToPrintRepo extends JpaRepository<PDFFilesToPrint, Long
     @Query(value = "select * from pdffiles_to_print pdf where pdf.printed = false order by id limit 1", nativeQuery = true)
     PDFFilesToPrint getNotPrintedFirst();
 
-    default void save(String fileName){
+    default void save(String fileName) {
         PDFFilesToPrint pdfFilesToPrint = new PDFFilesToPrint();
         pdfFilesToPrint.setFileName(fileName);
         pdfFilesToPrint.setDate(new Date());

@@ -2,11 +2,7 @@ package com.akimatBot.web.security.jwt;
 
 import com.akimatBot.entity.standart.Role;
 import com.akimatBot.services.EmployeeService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,16 +30,12 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.token.secret}")
-    private String secret;
-
-    @Value("${jwt.token.expired}")
-    private long validityInMilliseconds;
-
     @Autowired
     EmployeeService employeeService;
-
-
+    @Value("${jwt.token.secret}")
+    private String secret;
+    @Value("${jwt.token.expired}")
+    private long validityInMilliseconds;
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -86,7 +78,7 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         return null;
     }
@@ -99,11 +91,7 @@ public class JwtTokenProvider {
 
 //            long code = Long.parseLong(request.getHeader("code"));
 //            if (claims.getBody().getExpiration().before(new Date()) && !userService.isExistsCode(code)) {
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-
-            return true;
+            return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
         }

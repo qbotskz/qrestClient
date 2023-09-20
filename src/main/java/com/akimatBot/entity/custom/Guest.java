@@ -54,6 +54,7 @@ public class Guest {
             this.orderItems = new ArrayList<>();
         this.orderItems.addAll(orderItems);
     }
+
     public void addOrderItem(OrderItem orderItem) {
         if (this.orderItems == null)
             this.orderItems = new ArrayList<>();
@@ -61,7 +62,7 @@ public class Guest {
     }
 
 
-    public Map<Object, Object> getJson(){
+    public Map<Object, Object> getJson() {
         Map<Object, Object> map = new TreeMap<>();
         map.put("id", id);
         map.put("createdDate", DateUtil.getTimeDate2(this.createdDate));
@@ -75,7 +76,7 @@ public class Guest {
 
         List<Map<Object, Object>> items = new ArrayList<>();
 
-        for (OrderItem item :  getOrderItems()) {
+        for (OrderItem item : getOrderItems()) {
             items.add(item.getJson());
         }
 
@@ -101,7 +102,7 @@ public class Guest {
     private List<OrderItemDTO> getOrderItemsDTO(Language language) {
         List<OrderItemDTO> items = new ArrayList<>();
 
-        for (OrderItem item :  getOrderItems()) {
+        for (OrderItem item : getOrderItems()) {
             items.add(item.getOrderItemDTO(language));
         }
 

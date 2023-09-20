@@ -2,8 +2,10 @@ package com.akimatBot.services;
 
 import com.akimatBot.entity.custom.CartItem;
 import com.akimatBot.entity.custom.Food;
+import com.akimatBot.entity.enums.OrderStatus;
 import com.akimatBot.repository.repos.CartItemRepo;
 import com.akimatBot.repository.repos.DeskRepo;
+import com.akimatBot.repository.repos.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.List;
 @Transactional
 public class CartItemService {
     private final CartItemRepo cartItemRepo;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     FoodService foodService;
@@ -31,20 +36,22 @@ public class CartItemService {
     public List<CartItem> findAllCartItemsOfUser(long chatId) {
         return cartItemRepo.findAllByClientChatIdOrderById(chatId);
     }
+
     public List<CartItem> findAllCartItemsOfTable(long tableId) {
         return cartItemRepo.findAllByDeskIdOrderById(tableId);
     }
 
-    public CartItem findByBookAndTable(long foodId, long tableId){
+    public CartItem findByBookAndTable(long foodId, long tableId) {
 
         return cartItemRepo.findByFoodIdAndDeskId(foodId, tableId);
     }
-    public CartItem findByBookAndChatId(Food food, long chatId){
+
+    public CartItem findByBookAndChatId(Food food, long chatId) {
 
         return cartItemRepo.findByFoodAndClientChatId(food, chatId);
     }
 
-    public CartItem findByIdAndChatId(long id, long chatId){
+    public CartItem findByIdAndChatId(long id, long chatId) {
         return cartItemRepo.findByIdAndClientChatId(id, chatId);
     }
 
@@ -54,7 +61,7 @@ public class CartItemService {
         return cartItemRepo.save(newCartItem);
     }
 
-    private boolean addToCart(CartItem cartItem, Food food) {
+    private boolean addToCart(CartItem cartItem, Food food, Long chatId) {
         //System.out.println(food.getRemains());
         if (food.getRemains() <= 0) {
             return false;
@@ -65,11 +72,16 @@ public class CartItemService {
         this.save(cartItem);
         food.setRemains(food.getRemains() - 1);
         foodService.save(food);
+
+        if (chatId != null) {
+            System.out.println(chatId);
+            orderRepository.setStatus(chatId, OrderStatus.NEW);
+        }
         return true;
     }
 
     @Transactional
-    public boolean addToCart(Long foodId, long chatId){
+    public boolean addToCart(Long foodId, long chatId) {
         Food food = foodService.findById(foodId);
         CartItem cartItem = this.findByBookAndChatId(food, chatId);
 
@@ -77,24 +89,25 @@ public class CartItemService {
             cartItem = new CartItem(chatId, food, 0);
         }
 
-        return addToCart(cartItem, food);
+        return addToCart(cartItem, food, chatId);
     }
+
     @Transactional
-    public boolean addToCartFromWaiter(long foodId, long tableId){
+    public boolean addToCartFromWaiter(long foodId, long tableId) {
         Food food = foodService.findById(foodId);
         CartItem cartItem = this.findByBookAndTable(foodId, tableId);
 
-        if (cartItem == null){
+        if (cartItem == null) {
             cartItem = new CartItem();
             cartItem.setDesk(deskRepo.getOne(tableId));
             cartItem.setQuantity(1);
             cartItem.setFood(foodService.findById(foodId));
         }
-        return addToCart(cartItem, food);
+        return addToCart(cartItem, food, null);
     }
 
     @Transactional
-    public boolean decreaseCartItemQuantity(long bookId, long chatId){
+    public boolean decreaseCartItemQuantity(long bookId, long chatId) {
 
         try {
             CartItem cartItem;
@@ -112,12 +125,11 @@ public class CartItemService {
             }
 
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
 
     @Transactional
@@ -129,6 +141,7 @@ public class CartItemService {
     public void clearUserCart(long chatId) {
         cartItemRepo.deleteCartItemsByClientChatId(chatId);
     }
+
     @Transactional
     public void clearDeskCart(long deskId) {
         cartItemRepo.deleteCartItemsByDeskId(deskId);

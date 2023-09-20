@@ -1,6 +1,5 @@
 package com.akimatBot.entity.custom;
 
-import com.akimatBot.entity.enums.StarGrade;
 import com.akimatBot.entity.standart.User;
 import lombok.Data;
 
@@ -12,7 +11,7 @@ import java.util.Date;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int     id;
+    private int id;
 
     private String reviewText;
 

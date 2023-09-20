@@ -1,17 +1,20 @@
 package com.akimatBot.web.controllers.client;
 
 import com.akimatBot.entity.custom.Cheque;
-import com.akimatBot.entity.custom.Desk;
 import com.akimatBot.entity.custom.FoodOrder;
 import com.akimatBot.entity.custom.OrderItem;
 import com.akimatBot.repository.repos.*;
-import com.akimatBot.services.*;
-import com.akimatBot.web.dto.*;
-import org.apache.poi.ss.formula.functions.T;
+import com.akimatBot.services.CartItemService;
+import com.akimatBot.services.ClientOrderService;
+import com.akimatBot.services.EmployeeService;
+import com.akimatBot.services.LanguageService;
+import com.akimatBot.web.dto.AnswerDTO;
+import com.akimatBot.web.dto.CallWaiterDTO;
+import com.akimatBot.web.dto.FoodOrderDTO;
+import com.akimatBot.web.dto.OrderItemDeleteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,9 +53,6 @@ public class OrderController {
     OrderItemRepository orderItemRepository;
 
 
-
-
-
     //перед отправкой запроса на этот метод, должны убедиться что со стороны телеграм бота(в комманде) отправляется параметр isNewClient в WebApp
     //после открытия страницы с фронта если есть параметр isNewClient то отправляется запрос на этот параметр
 
@@ -60,36 +60,36 @@ public class OrderController {
     //выаыва ыва
     @PostMapping("/createOrder")
     public ResponseEntity<Object> createOrderRest(@RequestHeader("chatId") long chatId,
-                                             @RequestParam("deskId") long deskId
-    ){
-        FoodOrder foodOrder = clientOrderService.createNewOrder(chatId,deskId);
+                                                  @RequestParam("deskId") long deskId
+    ) {
+        FoodOrder foodOrder = clientOrderService.createNewOrder(chatId, deskId);
         return new ResponseEntity<>(foodOrder.getDesk().getDeskDTOFull(LanguageService.getLanguage(chatId)), HttpStatus.OK);
     }
 
     @GetMapping("/getOrder/active")
-    public ResponseEntity<Object> getActiveOrder(@RequestHeader("chatId") long chatId){
+    public ResponseEntity<Object> getActiveOrder(@RequestHeader("chatId") long chatId) {
         FoodOrder order = clientOrderService.getActiveOrderInRestaurant(chatId);
-        if(order != null) {
+        if (order != null) {
             return new ResponseEntity<>(order.getDesk().getDeskDTOFull(LanguageService.getLanguage(chatId)),
                     HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(new AnswerDTO("order is empty").getJson(),
                     HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getOrder/button")
-    public ResponseEntity<?> getButtonForPay(@RequestParam("chatId")long chatId){
+    public ResponseEntity<?> getButtonForPay(@RequestParam("chatId") long chatId) {
         FoodOrder order = clientOrderService.getActiveOrderInRestaurant(chatId);
-        if(order != null) {
-            if (order.getWaiter()!=null){
+        if (order != null) {
+            if (order.getWaiter() != null) {
                 return new ResponseEntity<>("status:\"true\"",
                         HttpStatus.OK);
-            }else{
+            } else {
                 return new ResponseEntity<>("status:\"false\"",
                         HttpStatus.OK);
             }
-        }else{
+        } else {
             return new ResponseEntity<>(new AnswerDTO("order is empty").getJson(),
                     HttpStatus.BAD_REQUEST);
         }
@@ -97,11 +97,11 @@ public class OrderController {
 
     @PostMapping("/addToCart")
     public ResponseEntity<Object> addToCart(@RequestHeader("chatId") long chatId,
-                                             @RequestParam("foodId") long foodId
-    ){
+                                            @RequestParam("foodId") long foodId
+    ) {
         try {
             return new ResponseEntity<>(clientOrderService.addToCart(chatId, foodId), HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
@@ -112,51 +112,52 @@ public class OrderController {
     @PostMapping("/orderItem/delete")
     public ResponseEntity<Object> deleteOrderItem(
             @RequestBody OrderItemDeleteDTO item,
-            @RequestHeader(value="chatId") long chatId
-    ){
+            @RequestHeader(value = "chatId") long chatId
+    ) {
 
         try {
 
             OrderItem orderItem1 = orderItemRepository.getOne(item.getOrderItem().getId());
             Cheque cheque = orderItem1.getGuest().getFoodOrder().getCheque();
-            if (clientOrderService.cancelOrderItem(item)){
+            if (clientOrderService.cancelOrderItem(item)) {
                 return new ResponseEntity<>(cheque.getChequeDTO(), HttpStatus.OK);
             }
-            return new ResponseEntity<>("Problemka",HttpStatus.FORBIDDEN);
-        }catch (Exception e){
+            return new ResponseEntity<>("Problemka", HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
 
     }
+
     @PostMapping("/orderItem/decrease")
     public ResponseEntity<Object> editCountOfOrderItem(
-            @RequestParam ("orderItemId") long orderItemId,
-            @RequestHeader(value="chatId") long chatId
-    ){
+            @RequestParam("orderItemId") long orderItemId,
+            @RequestHeader(value = "chatId") long chatId
+    ) {
 
         try {
-            return new ResponseEntity<>(clientOrderService.decreaseOrderItem(orderItemId,chatId), HttpStatus.OK);
-        }catch (Exception e){
+            return new ResponseEntity<>(clientOrderService.decreaseOrderItem(orderItemId, chatId), HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
 
     }
 
     @PostMapping("/place")
-    public ResponseEntity<Object> place(@RequestHeader("chatId") long chatId){
+    public ResponseEntity<Object> place(@RequestHeader("chatId") long chatId) {
         try {
             clientOrderService.place(chatId);
             return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/getOrder/done")
-    public ResponseEntity<Object> getDoneOrders(@RequestHeader("chatId") long chatId){
+    public ResponseEntity<Object> getDoneOrders(@RequestHeader("chatId") long chatId) {
         List<FoodOrderDTO> order = clientOrderService.getDoneOrdersOfClient(chatId);
-        if(order != null && order.size() != 0) {
+        if (order != null && order.size() != 0) {
             return new ResponseEntity<>(order, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new AnswerDTO("order is empty").getJson(), HttpStatus.BAD_REQUEST);
@@ -165,37 +166,36 @@ public class OrderController {
 
     @GetMapping("/getOrder/{id}")
     public ResponseEntity<Object> getOneOrders(@PathVariable("id") long id,
-                                               @RequestHeader("chatId") long chatId){
-        FoodOrder order =  orderRepo.findOrderById(id);
-            return new ResponseEntity<>(order.getClientFoodOrderDTO(LanguageService.getLanguage(chatId)),
-                    HttpStatus.OK);
+                                               @RequestHeader("chatId") long chatId) {
+        FoodOrder order = orderRepo.findOrderById(id);
+        return new ResponseEntity<>(order.getClientFoodOrderDTO(LanguageService.getLanguage(chatId)),
+                HttpStatus.OK);
     }
 
     @PostMapping("/callWaiter")
-    public ResponseEntity<Object> callWaiter(@RequestBody FoodOrderDTO foodOrderDTO ){
+    public ResponseEntity<Object> callWaiter(@RequestBody FoodOrderDTO foodOrderDTO) {
         CallWaiterDTO callWaiterDTO = clientOrderService.callWaiter(foodOrderDTO);
-        if (callWaiterDTO != null){
+        if (callWaiterDTO != null) {
             return new ResponseEntity<>(callWaiterDTO, HttpStatus.OK);
         }
-        return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/requestCheque")
-    public ResponseEntity<Object> requestCheque(@RequestBody FoodOrderDTO foodOrderDTO ){
+    public ResponseEntity<Object> requestCheque(@RequestBody FoodOrderDTO foodOrderDTO) {
         Cheque cheque = clientOrderService.requestCheque(foodOrderDTO);
-        if (cheque != null){
+        if (cheque != null) {
             return new ResponseEntity<>(cheque.getChequeDTO(), HttpStatus.OK);
         }
-        return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/isAccept")
-    public ResponseEntity<Object> isAccept(@RequestParam("orderId") long orderId){
+    public ResponseEntity<Object> isAccept(@RequestParam("orderId") long orderId) {
 
         return new ResponseEntity<>(clientOrderService.isAccept(orderId), HttpStatus.OK);
 
     }
-
 
 
 //    @GetMapping("/activeOrders")
@@ -210,7 +210,7 @@ public class OrderController {
 
 
     @PostMapping("/createOrder/inRestaurant/reOrder")
-    public FoodOrderDTO reOrderRest(@RequestParam("chatId") long chatId){
+    public FoodOrderDTO reOrderRest(@RequestParam("chatId") long chatId) {
 
 //        User user = userService.findByChatId(chatId);
 //        userService.save(user);
@@ -225,16 +225,14 @@ public class OrderController {
     }
 
 
-
-
     //method for client // todo overwrite
     @PostMapping("/createOrder/takeout")
     public FoodOrderDTO createOrder(@RequestParam("chatId") long chatId,
-                                           @RequestParam("useCashback") boolean useCashback,
-                                           @RequestParam("deliverNeed") boolean deliverNeed,
-                                           @RequestParam("address") String address,
-                                           @RequestParam("fullName") String fullName,
-                                           @RequestParam("phoneNumber") String phoneNumber){
+                                    @RequestParam("useCashback") boolean useCashback,
+                                    @RequestParam("deliverNeed") boolean deliverNeed,
+                                    @RequestParam("address") String address,
+                                    @RequestParam("fullName") String fullName,
+                                    @RequestParam("phoneNumber") String phoneNumber) {
 
 //        User user = userService.findByChatId(chatId);
 //        user.setPhone(phoneNumber);

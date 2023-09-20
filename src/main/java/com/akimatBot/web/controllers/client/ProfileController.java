@@ -17,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/client/profile")
 public class ProfileController {
@@ -34,23 +32,24 @@ public class ProfileController {
 
     @Autowired
     GradeTextTemplateRepo gradeTextTemplateRepo;
+
     @PostMapping("/setLanguage")
     public void setLanguage(@RequestBody Language language,
-                            @RequestHeader Long chatId){
+                            @RequestHeader Long chatId) {
 
         LanguageService.setLanguage(chatId, language);
 
     }
 
     @GetMapping("/getUser")
-    public UserDTO getUser(@RequestHeader Long chatId){
+    public UserDTO getUser(@RequestHeader Long chatId) {
 
         return userRepository.getByChatId(chatId).getDTO();
 
     }
 
     @GetMapping("/getLanguage")
-    public Language getLanguage(@RequestHeader Long chatId){
+    public Language getLanguage(@RequestHeader Long chatId) {
 
         return LanguageService.getLanguage(chatId);
 
@@ -58,51 +57,51 @@ public class ProfileController {
 
     @PostMapping("/saveUser")
     public void saveUser(
-                            @RequestBody UserDTO userDTO){
+            @RequestBody UserDTO userDTO) {
 
         userService.saveDTO(userDTO);
 
     }
 
     @GetMapping("/aboutRest")
-    private ResponseEntity<Object> getAboutRest(@RequestHeader Long chatId){
+    private ResponseEntity<Object> getAboutRest(@RequestHeader Long chatId) {
         return new ResponseEntity<>(LanguageService.getAboutRest(chatId), HttpStatus.OK);
     }
 
     @PostMapping("/reviews")
-    private ResponseEntity<Object> setReviews(@RequestBody ReviewsDTO reviewsDTO){
+    private ResponseEntity<Object> setReviews(@RequestBody ReviewsDTO reviewsDTO) {
         userService.setReview(reviewsDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
     @GetMapping("/gradeText")
-    private ResponseEntity<?> getGradeText(@RequestHeader Long chatId){
+    private ResponseEntity<?> getGradeText(@RequestHeader Long chatId) {
         return new ResponseEntity<>(userService.getTexts(), HttpStatus.OK);
     }
 
     @PostMapping("/setGrade")
-    private ResponseEntity<Object> setGrade(@RequestBody GradeDTO gradeDTO){
+    private ResponseEntity<Object> setGrade(@RequestBody GradeDTO gradeDTO) {
         User user = userRepository.findByChatId(gradeDTO.getChatId());
-        if (user!=null){
+        if (user != null) {
             Guest guest = user.getCurrentGuest();
-            if (guest!=null){
+            if (guest != null) {
                 FoodOrder foodOrder = guest.getFoodOrder();
-                if (foodOrder!=null){
-                    if (foodOrder.getWaiter()!=null){
+                if (foodOrder != null) {
+                    if (foodOrder.getWaiter() != null) {
                         userService.setGrade(gradeDTO);
                         return new ResponseEntity<>(HttpStatus.OK);
-                    }else {
-                        return new ResponseEntity<>("status:\"waiter null\"",HttpStatus.NOT_FOUND);
+                    } else {
+                        return new ResponseEntity<>("status:\"waiter null\"", HttpStatus.NOT_FOUND);
                     }
-                }else{
-                    return new ResponseEntity<>("status:\"foodOrder null\"",HttpStatus.NOT_FOUND);
+                } else {
+                    return new ResponseEntity<>("status:\"foodOrder null\"", HttpStatus.NOT_FOUND);
                 }
-            }else{
-                return new ResponseEntity<>("status:\"guest null\"",HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>("status:\"guest null\"", HttpStatus.NOT_FOUND);
             }
-        }else{
-            return new ResponseEntity<>("status:\"user null\"",HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>("status:\"user null\"", HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -5,57 +5,49 @@ import com.akimatBot.entity.enums.OrderItemStatus;
 import com.akimatBot.web.dto.OrderItemDTO;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Entity
 @Setter
 @Getter
 public class OrderItem {
+    @Enumerated
+    OrderItemStatus orderItemStatus;
     @Setter
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Setter
     @Getter
     @OneToOne
     @JoinColumn(updatable = false)
-    private Food food ;
-
-
+    private Food food;
     @Setter
     @Getter
     private int quantity;
-
     @Setter
     @Getter
     private int price;
-
-    @Setter
-    @Getter
-    private String comment;
 
 //    @Setter
 //    @Getter
 //    @ManyToOne
 //    @JoinColumn(updatable = false)
 //    private FoodOrder foodOrder;
-
-
+    @Setter
+    @Getter
+    private String comment;
     @Setter
     @Getter
     @ManyToOne
     @JoinColumn(updatable = false)
     private Guest guest;
-
     private Date createdDate;
-
-    @Enumerated
-    OrderItemStatus orderItemStatus;
 
 
     public OrderItem() {
@@ -67,7 +59,7 @@ public class OrderItem {
         this.price = price;
     }
 
-    public Map<Object, Object> getJson(){
+    public Map<Object, Object> getJson() {
         Map<Object, Object> map = new TreeMap<>();
         map.put("id", id);
         map.put("food", this.food.getJson(Language.en));
@@ -82,11 +74,12 @@ public class OrderItem {
     public void addQuantity() {
         this.quantity += 1;
     }
+
     public void minusQuantity() {
         this.quantity -= 1;
     }
 
-    public double getTotal(){
+    public double getTotal() {
 //        System.out.println(getJson());
         return this.quantity * this.price;
     }

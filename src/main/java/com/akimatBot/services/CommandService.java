@@ -18,25 +18,26 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class CommandService {
 
-    private long        chatId;
-    private ButtonRepository buttonRepo = TelegramBotRepositoryProvider.getButtonRepository();
+    private long chatId;
+    private final ButtonRepository buttonRepo = TelegramBotRepositoryProvider.getButtonRepository();
 
-    public Command getCommand(Update update)   throws CommandNotFoundException {
-        chatId                  = UpdateUtil.getChatId(update);
-        Message updateMessage   = update.getMessage();
-        String  inputtedText;
+    public Command getCommand(Update update) throws CommandNotFoundException {
+        chatId = UpdateUtil.getChatId(update);
+        Message updateMessage = update.getMessage();
+        String inputtedText;
         if (update.hasCallbackQuery()) {
-            inputtedText        = update.getCallbackQuery().getData().split(Const.SPLIT)[0];
-            updateMessage       = update.getCallbackQuery().getMessage();
+            inputtedText = update.getCallbackQuery().getData().split(Const.SPLIT)[0];
+            updateMessage = update.getCallbackQuery().getMessage();
             try {
-                if (inputtedText != null && inputtedText.substring(0,6).equals(Const.ID_MARK)) {
+                if (inputtedText != null && inputtedText.startsWith(Const.ID_MARK)) {
                     try {
                         return getCommandById(Integer.parseInt(inputtedText.split(Const.SPLIT)[0].replaceAll(Const.ID_MARK, "")));
                     } catch (Exception e) {
                         inputtedText = updateMessage.getText();
                     }
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         } else {
             try {
                 inputtedText = updateMessage.getText();
@@ -44,7 +45,7 @@ public class CommandService {
                 throw new CommandNotFoundException(new Exception("No data is available"));
             }
         }
-        if (inputtedText != null && inputtedText.contains("/start") && inputtedText.length() > 6){
+        if (inputtedText != null && inputtedText.contains("/start") && inputtedText.length() > 6) {
             return new id031_OpenLink();
         }
         Button button = buttonRepo.findByNameAndLangId(inputtedText, getLanguage().getId());
@@ -56,13 +57,16 @@ public class CommandService {
         return LanguageService.getLanguage(chatId);
     }
 
-    private     Command     getCommand(Button button)   throws CommandNotFoundException {
-        if (button == null || button.getCommandId() == null || button.getCommandId() == 0) throw new CommandNotFoundException(new Exception("No data is available"));
+    private Command getCommand(Button button) throws CommandNotFoundException {
+        if (button == null || button.getCommandId() == null || button.getCommandId() == 0)
+            throw new CommandNotFoundException(new Exception("No data is available"));
         Command command = CommandFactory.getCommand(button.getCommandId());
         command.setId(button.getCommandId());
         command.setMessageId(button.getMessageId() == null ? 0 : button.getMessageId());
         return command;
     }
 
-    private     Command     getCommandById(int id) { return CommandFactory.getCommand(id); }
+    private Command getCommandById(int id) {
+        return CommandFactory.getCommand(id);
+    }
 }

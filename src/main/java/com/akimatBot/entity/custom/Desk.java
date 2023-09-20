@@ -2,16 +2,12 @@ package com.akimatBot.entity.custom;
 
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.entity.enums.OrderStatus;
-import com.akimatBot.repository.TelegramBotRepositoryProvider;
-import com.akimatBot.services.CartItemService;
 import com.akimatBot.web.dto.DeskDTO;
 import com.akimatBot.web.dto.FoodOrderDTO;
-import com.akimatBot.web.dto.HallDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +17,7 @@ public class Desk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long     id;
+    private long id;
 
     private long number;
 
@@ -36,7 +32,7 @@ public class Desk {
     }
 
     private FoodOrderDTO getOrderDTO(Language language) {
-        if (this.currentOrder != null){
+        if (this.currentOrder != null) {
             return currentOrder.getFoodOrderDTO(language);
         }
         return null;
@@ -53,7 +49,7 @@ public class Desk {
     }
 
     private OrderStatus getFoodOrderStatus(Desk desk) {
-        if (desk != null && desk.getCurrentOrder() != null){
+        if (desk != null && desk.getCurrentOrder() != null) {
             return desk.getCurrentOrder().getOrderStatus();
         }
         return null;

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class id033_Test extends Command {
     @Override
-    public boolean execute() throws TelegramApiException, IOException, SQLException, Exception {
+    public boolean execute() throws Exception {
         return EXIT;
 
     }

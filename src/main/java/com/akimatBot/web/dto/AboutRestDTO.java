@@ -3,7 +3,6 @@ package com.akimatBot.web.dto;
 
 import com.akimatBot.entity.enums.Language;
 import lombok.Data;
-import org.joda.time.DateTime;
 
 import java.sql.Time;
 
@@ -11,10 +10,8 @@ import java.sql.Time;
 @Data
 public class AboutRestDTO {
 
-    private Long chatId;
-
     Language language;
-    
+    private Long chatId;
     private String addresskz;
     private String addressru;
 

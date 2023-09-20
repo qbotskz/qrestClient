@@ -1,6 +1,6 @@
 package com.akimatBot.entity.standart;
 
-import com.akimatBot.entity.custom.*;
+import com.akimatBot.entity.custom.Guest;
 import com.akimatBot.entity.enums.Gender;
 import com.akimatBot.entity.enums.Language;
 import com.akimatBot.web.dto.UserDTO;
@@ -17,15 +17,15 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long     id;
+    private long id;
 
-    private long        chatId;
+    private long chatId;
 
-    private String      phone;
+    private String phone;
 
-    private String      fullName;
+    private String fullName;
 
-    private String      userName;
+    private String userName;
 
     private Language language;
 
