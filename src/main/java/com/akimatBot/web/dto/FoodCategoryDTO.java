@@ -19,5 +19,7 @@ public class FoodCategoryDTO {
 
     private List<FoodDTO> foods;
 
+    private Long priority;
+
 
 }
