@@ -3,13 +3,7 @@ package com.akimatBot.command.impl;
 
 import com.akimatBot.command.Command;
 import com.akimatBot.config.AppProperties;
-<<<<<<< HEAD
-import com.akimatBot.entity.custom.Desk;
-import com.akimatBot.entity.custom.FoodOrder;
-import com.akimatBot.entity.custom.Guest;
-=======
 import com.akimatBot.entity.enums.WaitingType;
->>>>>>> d2a90300210b7ccf1791375416da0a6610080c3d
 import com.akimatBot.entity.standart.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
