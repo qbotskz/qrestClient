@@ -231,6 +231,6 @@ public interface OrderRepository extends JpaRepository<FoodOrder, Integer> {
     @Query("select (fo is not null ) from FoodOrder fo where fo.id = ?1 and fo.waiter is not null")
     Boolean isAccept(long orderId);
 
-    @Query("select (fo is not null) from FoodOrder fo where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
+    @Query("select (fo.waiter is not null) from FoodOrder fo where fo.id = (select user.currentGuest.foodOrder.id from users user where user.chatId = ?1)")
     Boolean isAcceptByChatId(long chatId);
 }
