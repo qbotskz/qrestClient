@@ -67,7 +67,7 @@ public class ClientOrderService {
 
 
     @Transactional
-    public FoodOrder createNewOrder(long chatId, long deskId) {
+    public synchronized FoodOrder createNewOrder(long chatId, long deskId) {
 
         FoodOrder foodOrder;
         User user = userService.getUserByChatId(chatId);
@@ -91,6 +91,7 @@ public class ClientOrderService {
                 foodOrder.setCheque(cheque);
                 foodOrder = orderRepository.save(foodOrder);
                 desk.setCurrentOrder(foodOrder);
+                deskRepo.save(desk);
             }
             guest = new Guest();
             guest.setClient(userService.getUserByChatId(chatId));
