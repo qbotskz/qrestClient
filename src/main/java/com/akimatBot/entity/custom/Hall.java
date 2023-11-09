@@ -23,6 +23,8 @@ public class Hall {
     private long id;
     private String name;
 
+    private Double service;
+
     public Hall() {
     }
 

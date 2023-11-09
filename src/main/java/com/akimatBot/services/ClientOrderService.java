@@ -85,7 +85,7 @@ public class ClientOrderService {
                 foodOrder.setOrderStatus(OrderStatus.NEW);
 
                 Cheque cheque = new Cheque();
-                cheque.setService(Double.parseDouble(propertiesRepo.findFirstById(4).getValue1()));
+                cheque.setService(desk.getHall().getService());
                 cheque = chequeRepo.save(cheque);
 
                 foodOrder.setCheque(cheque);

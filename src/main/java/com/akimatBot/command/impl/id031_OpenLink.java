@@ -7,7 +7,6 @@ import com.akimatBot.entity.enums.WaitingType;
 import com.akimatBot.entity.standart.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.webapp.WebAppData;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -69,10 +68,6 @@ public class id031_OpenLink extends Command {
         if (user.getLinkMessageId() != null) {
             deleteMessage(user.getLinkMessageId().intValue());
         }
-
-        System.out.println("desk of client = " + deskId);
-        WebAppData webAppData = new WebAppData();
-        webAppData.setData("asd");
 
         WebAppInfo webAppInfo = new WebAppInfo();
 
